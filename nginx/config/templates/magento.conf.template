@@ -6,7 +6,7 @@ upstream fastcgi_backend {
   #  server   unix:/var/run/php/php7.0-fpm.sock;
 }
 server {
-   server_name localhost;
+   server_name _;
    listen 80 default_server;
    set $MAGE_ROOT /var/www/html;
    set $MAGE_DEBUG_SHOW_ARGS 1;
