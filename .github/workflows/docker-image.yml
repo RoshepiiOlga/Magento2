@@ -6,7 +6,7 @@ on:
 
 jobs:
 
-  deploy:
+  build:
     name: Build image
     runs-on:  Magento2/Dockerfile 
 
