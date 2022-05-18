@@ -8,7 +8,7 @@ jobs:
 
   build:
     name: Build image
-    runs-on:  Magento2/Dockerfile 
+    runs-on: nginx:latest 
 
     steps:
     - name: Check out code
