@@ -14,7 +14,7 @@ jobs:
     
     steps:
     - name: Check out code
-      uses: php@v1
+      uses: actions/php@v1
     
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
