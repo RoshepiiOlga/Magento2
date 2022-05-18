@@ -8,7 +8,7 @@ jobs:
 
   deploy:
     name: Build image
-    runs-on: Dockerfile
+    runs-on:  Magento2/Dockerfile 
 
     steps:
     - name: Check out code
