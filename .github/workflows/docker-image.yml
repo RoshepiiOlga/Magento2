@@ -15,17 +15,17 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v2
+      
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
     
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@arn:aws:iam::908410081654:user/magento_git_user
+      uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-west-1
-        
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
 
     - name: Build, tag, and push image to Amazon ECR
       env:
