@@ -25,14 +25,6 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-    
-    - name: Build and push
-      uses: docker/build-push-action@v1
-      with:
-        push: true
-        tags: user/app:latest
-        secrets: |
-          GIT_AUTH_TOKEN=${{ secrets.MYTOKEN }}
           
     - name: Build, tag, and push the image to Amazon ECR
       id: build-image
