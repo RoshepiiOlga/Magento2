@@ -17,15 +17,15 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       
-    - name: Python module dependency scan
-      working-directory: Magento2
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        DOCKER_BUILDKIT: 1
-      run: |
-        docker target scan-result \
-          --output type=local \
-          --build-arg SNYK_TOKEN=${SNYK_TOKEN} .
+#     - name: Python module dependency scan
+#       working-directory: Magento2
+#       env:
+#         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+#         DOCKER_BUILDKIT: 1
+#       run: |
+#         docker target scan-result \
+#           --output type=local \
+#           --build-arg SNYK_TOKEN=${SNYK_TOKEN} .
           
     - name: Check snyk scan status
       run: |
@@ -47,30 +47,14 @@ jobs:
           
     - name: Build Nginx image to Amazon ECR
       id: build-nginx_image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-        IMAGE_TAG: nginx
       run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
     
-    - name: Security scan on docker image
-      uses: snyk/actions/docker@master
-      id: docker-image-scan
-      continue-on-error: true
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+    - name: Scan image
+      uses: Azure/container-scan@v0
       with:
-        image: ${{ steps.login-ecr.outputs.registry }}/${{ matrix.repository }}
-        args: --file=./application/${{ matrix.repository }}.Dockerfile 
-          --severity-threshold=low
-          --sarif-file-output=./application/${{ matrix.repository }}/docker.snyk.sarif
-        sarif: false
-
-    - name: Upload sarif file to Github Code Scanning
-      if: always()
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: application/${{ matrix.repository }}
+        image-name: build-nginx_image/spring-petclinic:${{ github.run_number }}
+        severity-threshold: CRITICAL
+        run-quality-checks: true 
 
     - name: Check docker image scan status
       if: ${{ steps.docker-image-scan.outcome == 'failure' }}
