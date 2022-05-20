@@ -48,13 +48,6 @@ jobs:
     - name: Build Nginx image to Amazon ECR
       id: build-nginx_image
       run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-    
-    - name: Scan image
-      uses: Azure/container-scan@v0
-      with:
-        image-name: build-nginx_image/spring-petclinic:${{ github.run_number }}
-        severity-threshold: CRITICAL
-        run-quality-checks: true 
 
     - name: Check docker image scan status
       if: ${{ steps.docker-image-scan.outcome == 'failure' }}
