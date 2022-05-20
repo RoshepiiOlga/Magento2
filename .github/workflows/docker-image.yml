@@ -18,14 +18,13 @@ jobs:
       uses: actions/checkout@v2
       
     - name: Python module dependency scan
-      working-directory: application
+      working-directory: Magento2
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         DOCKER_BUILDKIT: 1
       run: |
-        docker build -f ${{ matrix.repository }}.Dockerfile \
-          --target scan-result \
-          --output type=local,dest=${{ matrix.repository }} \
+        docker target scan-result \
+          --output type=local \
           --build-arg SNYK_TOKEN=${SNYK_TOKEN} .
           
     - name: Check snyk scan status
@@ -69,7 +68,7 @@ jobs:
 
     - name: Upload sarif file to Github Code Scanning
       if: always()
-      uses: github/codeql-action/upload-sarif@v1
+      uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: application/${{ matrix.repository }}
 
