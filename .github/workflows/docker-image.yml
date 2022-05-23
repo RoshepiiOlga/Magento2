@@ -54,10 +54,10 @@ jobs:
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         fail-build: false
-        severity-cutoff: underfined   
+        severity-cutoff:  low   
       
     - name: Resault scan and push docker images nginx 
-      if: ${{  github.docker-image-scan.action_status == 'underfined' }}
+      if: ${{  github.docker-image-scan.action_status == 'low' }}
    #   if: ${{ steps.docker-image-scan.outputs.sarifReport }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         
