@@ -41,8 +41,9 @@ jobs:
       uses: anchore/scan-action@v3
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
-        fail-build: true
+        fail-build: false
         severity-cutoff: critical
+        
 #     - name: Scan image
 #       id: scan
 #       uses: sysdiglabs/scan-action@v3
