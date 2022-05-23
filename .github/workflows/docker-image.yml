@@ -54,7 +54,7 @@ jobs:
     - uses: Azure/container-scan@v0
       name: scan image for vulnerabilities
         # threshold levels are UNKNOWN, LOW, MEDIUM, HIGH, CRITICAL
-      severity-threshold: MEDIUM
+     # severity-threshold: MEDIUM
       id: container_scan
         # To fail the job when vulnerabilities are found, set to false
       continue-on-error: true
