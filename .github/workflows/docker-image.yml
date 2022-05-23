@@ -40,10 +40,15 @@ jobs:
     - name: Scan image
       uses: anchore/scan-action@v3
       id: docker-image-scan
+      continue-on-error: true
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         fail-build: false
         severity-cutoff: critical
+    
+    - name: Check docker image scan status
+      if: ${{ steps.docker-image-scan.outcome == 'failure' }}
+      run: exit 1
         
     - name: Resault scan 
       if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
