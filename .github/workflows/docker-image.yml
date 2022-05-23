@@ -37,24 +37,24 @@ jobs:
       run: |
         docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
     
-    - name: Scan image
-      id: scan
-      uses: anchore/scan-action@v3
-      with:
-        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        input-type: docker-daemon
-        run-as-user: root
-    - uses: github/codeql-action/upload-sarif@v2
-      if: always()
-      with:
-        sarif_file: ${{ steps.scan.outputs.sarifReport }}    
 #     - name: Scan image
+#       id: scan
 #       uses: anchore/scan-action@v3
-#       id: docker-image-scan
 #       with:
 #         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-#         fail-build: false
-#         severity-cutoff: critical   
+#         input-type: docker-daemon
+#         run-as-user: root
+#     - uses: github/codeql-action/upload-sarif@v2
+#       if: always()
+#       with:
+#         sarif_file: ${{ steps.scan.outputs.sarifReport }}    
+    - name: Scan image
+      uses: anchore/scan-action@v3
+      id: docker-image-scan
+      with:
+        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        fail-build: false
+        severity-cutoff: critical   
       
     - name: Resault scan and push docker images nginx 
       if: ${{  github.action_status == 'failure' }}
