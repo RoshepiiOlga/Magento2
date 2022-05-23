@@ -42,7 +42,7 @@ jobs:
       id: docker-image-scan
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
-        fail-build: false
+        fail-build: true
         severity-cutoff: critical
         
     - name: resault scan 
