@@ -47,7 +47,7 @@ jobs:
         severity-cutoff: critical   
       
     - name: Resault scan and push docker images nginx 
-      if: ${{ steps.docker-image-scan.outputs !=  severity-cutoff }}
+      if: ${{ steps.docker-image-scan.outputs ==  medium }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         
 #     - name: Scan image
