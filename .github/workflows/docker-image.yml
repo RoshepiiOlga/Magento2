@@ -36,13 +36,17 @@ jobs:
         IMAGE_TAG: nginx
       run: |
         docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        
     - name: Scan image
       uses: anchore/scan-action@v3
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
         fail-build: false
         severity-cutoff: critical
+        
+    - name: resault scan 
+      if:  ${{  fail-build == 'true' }} 
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         
 #     - name: Scan image
 #       id: scan
