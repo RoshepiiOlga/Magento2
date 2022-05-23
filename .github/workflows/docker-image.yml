@@ -41,7 +41,7 @@ jobs:
       uses: anchore/scan-action@v3
       id: docker-image-scan
       with:
-        image: "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         fail-build: false
         severity-cutoff: critical
         
