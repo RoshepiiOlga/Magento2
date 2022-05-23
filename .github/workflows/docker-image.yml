@@ -46,7 +46,7 @@ jobs:
         severity-cutoff: critical   
       
     - name: Resault scan and push docker images nginx 
-      if: ${{ docker-image-scan.status == 'critical' }}
+      if: ${{  github.action_status == 'failure' }}
    #   if: ${{ steps.docker-image-scan.outputs.sarifReport }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         
