@@ -45,15 +45,11 @@ jobs:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         fail-build: false
         severity-cutoff: critical
-    
-    - name: Check docker image scan status
-      if: ${{ steps.docker-image-scan.outcome == 'failure' }}
-      run: exit 1
         
     - name: Resault scan 
       if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
       run: |
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         
 #     - name: Scan image
 #       id: scan
