@@ -49,7 +49,7 @@ jobs:
     - name: Resault scan 
       if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
       run: |
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker push --all-tags $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         
 #     - name: Scan image
 #       id: scan
