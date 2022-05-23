@@ -47,8 +47,9 @@ jobs:
           
     - name: Build Nginx image to Amazon ECR
       id: build-nginx_image
-      run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-        #  docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      run: |
+          docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     
     - uses: Azure/container-scan@v0
       name: scan image for vulnerabilities
