@@ -57,7 +57,7 @@ jobs:
         severity-cutoff:  low   
       
     - name: Resault scan and push docker images nginx 
-      if: ${{  github.docker-image-scan.action_status != 'low' }}
+      if: ${{  github.docker-image-scan.action_status != 'medium' }}
    #   if: ${{ steps.docker-image-scan.outputs.sarifReport }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
         
