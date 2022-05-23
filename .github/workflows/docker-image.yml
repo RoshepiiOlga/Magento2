@@ -43,7 +43,7 @@ jobs:
       continue-on-error: true
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        fail-build: false
+        fail-build: true
         severity-cutoff: critical   
       
     - name: Resault scan and push docker images nginx 
