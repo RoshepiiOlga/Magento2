@@ -52,7 +52,7 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     
     - name: Container image scan
-      uses: container-scan@v0.1
+      uses: nginx/container-scan@v0.1
       with:
         image-name: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
