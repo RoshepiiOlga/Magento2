@@ -7,7 +7,7 @@ on:
 name: Node Project `nginx` CI on ECR
 
 env:
-  ECR_DEPLOY:     ${{ true }}
+  ECR_DEPLOY:     true 
   ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
   ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
   IMAGE_TAG:      nginx
