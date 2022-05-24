@@ -37,8 +37,7 @@ jobs:
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
         IMAGE_TAG:      nginx
       id: build-nginx_image        
-      run: |
-        docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .         
+      run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .         
            
     - name: Scan image
       uses: anchore/scan-action@v3
@@ -53,8 +52,8 @@ jobs:
         ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
         IMAGE_TAG:      nginx
-        if: ${{ github.docker-image-scan.action_status != 'critical' }}
-        run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      if: ${{ github.docker-image-scan.action_status != 'critical' }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
               
     - name: test
       if: ${{ (github.docker-image-scan.action_status == 'critical') }}
