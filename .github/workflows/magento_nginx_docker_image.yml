@@ -7,7 +7,7 @@ on:
 name: Node Project `nginx` CI on ECR
 
 env:
-   ECR_DEPLOY: false   
+   ECR_DEPLOY: true   
 
 jobs:
   deploy:
@@ -63,9 +63,6 @@ jobs:
       if: ${{ env.ECR_DEPLOY == 'false' }}
       run: exit 1
       
-#     - name: test variable
-#       if: ${{ env.ECR_DEPLOY == 'true' }}
-#       run: echo "It is ok"
 
 
 
