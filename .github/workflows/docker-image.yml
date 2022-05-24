@@ -53,65 +53,34 @@ jobs:
       if: ${{  github.docker-image-scan.action_status != 'critical' }}
       run: |
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
- 
- 
- 
- 
- 
- 
- 
- # -t $ECR_REGISTRY/$ECR_REPOSITORY:latest   
+
+
+
+    - name: Build PHP image to Amazon ECR
+      id: build-php_image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+        IMAGE_TAG: php
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
+    
+    - name: Scan image php
+      uses: anchore/scan-action@v3
+      id: docker-image-scan_php
+      continue-on-error: true
+      with:
+        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        fail-build: false
+        severity-cutoff: critical    
       
-#     - name: Scan image
-#       id: scan
-#       uses: sysdiglabs/scan-action@v3
-#       with:
-#         image-tag: "sysdiglabs/dummy-vuln-app:latest"
-#         sysdig-secure-token: ${{ secrets.MYTOKEN }}
-#         input-type: docker-daemon
-#         run-as-user: root
-#     - uses: github/codeql-action/upload-sarif@v2
-#       if: always()
-#       with:
-#         sarif_file: ${{ steps.scan.outputs.sarifReport }} 
-##################################################################
-#     - name: Build PHP image to Amazon ECR
-#       id: build-php_image
-#       env:
-#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-#         IMAGE_TAG: php
-#       run: |
-#         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-#     - name: Scan image
-#       uses: anchore/scan-action@v3
-#       id: docker-image-scan_php
-#       continue-on-error: true
-#       with:
-#         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-#         fail-build: false
-#         severity-cutoff: critical
-        
-#     - name: Check snyk scan status
-#       run: |
-#         result=$( cat application/${{ matrix.repository }}/snyk.sarif | \
-#           jq -r '.runs[].results | length'
-#         )
-#         exit $result
-          
-#     - name: Upload sarif file to Github Code Scanning
-#       if: always()
-#       uses: github/codeql-action/upload-sarif@v2
-#       with:
-#         sarif_file: application/${{ matrix.repository }}
-          
-#     - name: Check docker image scan status
-#       if: ${{ steps.docker-image-scan_php.outcome == 'failure' }}
-#       run: exit 1    
-      
-#     - name: Resault scan and push docker images php
-# #      if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
-#       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    - name: Resault scan and push docker images php
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+        IMAGE_TAG: php
+      if: ${{  github.docker-image-scan.action_status != 'critical' }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     
   
   
