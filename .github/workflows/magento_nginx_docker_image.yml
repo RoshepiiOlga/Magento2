@@ -6,8 +6,8 @@ on:
 
 name: Node Project `nginx` CI on ECR
 
-env:
-   ECR_DEPLOY: true   
+# env:
+#    ECR_DEPLOY: true   
 
 jobs:
   deploy:
@@ -47,17 +47,17 @@ jobs:
         fail-build: false
         severity-cutoff: critical   
       
-    - name: Resault scan and push docker images nginx 
+    - name: Resault scan and push docker images nginx
       env:
-        ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-        IMAGE_TAG:      nginx
-      if: ${{ github.docker-image-scan.action_status != 'critical' }}
+        IMAGE_TAG: nginx
+      if: ${{  github.docker-image-scan.action_status != 'critical' }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
               
-    - name: test
-      if: ${{ (github.docker-image-scan.action_status == 'critical') }}
-        echo "Images has critical status."
+#     - name: test
+#       if: ${{ (github.docker-image-scan.action_status == 'critical') }}
+#         echo "Images has critical status."
         
   #      if: ${{ env.ECR_DEPLOY == 'false' }}
   #          exit 1
