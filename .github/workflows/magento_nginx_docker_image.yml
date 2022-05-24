@@ -57,9 +57,10 @@ jobs:
       run: |
         if: ${{  github.docker-image-scan.action_status != 'critical' && env.ECR_DEPLOY == 'true' }}
           run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        else: ${{ env.ECR_DEPLOY == 'false' }}
+    - name: test
+      if: ${{ env.ECR_DEPLOY == 'false' }}
           exit 1
-        fi
+   
 
 
 #     - name: Build PHP image to Amazon ECR
