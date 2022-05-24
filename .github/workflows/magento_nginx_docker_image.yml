@@ -53,19 +53,16 @@ jobs:
         ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
         IMAGE_TAG:      nginx
-      run: |
         if: ${{ github.docker-image-scan.action_status != 'critical' }}
-          run: |
-              docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
               
     - name: test
-      run: |
-        if: ${{ (github.docker-image-scan.action_status == 'critical') }}
+      if: ${{ (github.docker-image-scan.action_status == 'critical') }}
         echo "Images has critical status."
         
   #      if: ${{ env.ECR_DEPLOY == 'false' }}
   #          exit 1
-   
+
 
 
 #     - name: Build PHP image to Amazon ECR
