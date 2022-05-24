@@ -58,13 +58,12 @@ jobs:
 
 
     - name: Build PHP image to Amazon ECR
-      id: build-php_image
+  #    id: build-php_image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
         IMAGE_TAG_PHP: php
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP 
+      run: docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP -t $ECR_REGISTRY/$ECR_REPOSITORY:latest
     
 #     - name: Scan image php
 #       uses: anchore/scan-action@v3
