@@ -7,7 +7,7 @@ on:
 name: Node Project `nginx` CI on ECR
 
 env:
-  ECR_DEPLOY:     'true'
+  ECR_DEPLOY:     ${{ true }}
   ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
   ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
   IMAGE_TAG:      nginx
@@ -55,7 +55,7 @@ jobs:
       run: |
         if: ${{ ECR_DEPLOY == 'false' }}
           exit: code 1
-    - name: Resault scan
+    - name: Resault scan_2
       run: |
         if: ${{ ECR_DEPLOY == 'true' }}
           run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
