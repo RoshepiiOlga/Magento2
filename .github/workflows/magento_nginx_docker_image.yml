@@ -65,7 +65,7 @@ jobs:
       
     - name: test variable
       if: ${{ env.ECR_DEPLOY == 'true' }}
-      run: echo "It`s ok"
+      run: echo "It is ok"
 
 
 
