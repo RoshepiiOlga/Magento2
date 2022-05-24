@@ -61,26 +61,26 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-        IMAGE_TAG: php
+        IMAGE_TAG_PHP: php
       run: |
-        docker build -f Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
+        docker build -f Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP 
     
-    - name: Scan image php
-      uses: anchore/scan-action@v3
-      id: docker-image-scan_php
-      continue-on-error: true
-      with:
-        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        fail-build: false
-        severity-cutoff: critical    
+#     - name: Scan image php
+#       uses: anchore/scan-action@v3
+#       id: docker-image-scan_php
+#       continue-on-error: true
+#       with:
+#         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
+#         fail-build: false
+#         severity-cutoff: critical    
       
-    - name: Resault scan and push docker images php
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-        IMAGE_TAG: php
-      if: ${{  github.docker-image-scan.action_status != 'critical' }}
-      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+#     - name: Resault scan and push docker images php
+#       env:
+#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+#         IMAGE_TAG: php
+#       if: ${{  github.docker-image-scan.action_status != 'critical' }}
+#       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP
     
   
   
