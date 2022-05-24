@@ -6,6 +6,12 @@ on:
 
 name: Node Project `nginx` CI on ECR
 
+env:
+  ECR_DEPLOY: true
+  ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
+  ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+  IMAGE_TAG:      nginx
+
 jobs:
   deploy:
     name: Deploy
@@ -29,11 +35,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
           
     - name: Build Nginx image
-      id: build-nginx_image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-        IMAGE_TAG: Nginx
+      id: build-nginx_image        
       run: |
         docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
            
@@ -43,18 +45,21 @@ jobs:
       id: docker-image-scan
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        fail-build: false
+        fail-build: true
         severity-cutoff: critical   
       
     - name: Resault scan and push docker images nginx 
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-        IMAGE_TAG: Nginx
-      if: ${{  github.docker-image-scan.action_status != 'critical' }}
       run: |
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
+        if: ${{  github.docker-image-scan.action_status != 'critical' }}
+          run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+    - name: Resault scan
+      run: |
+        if: ${{  ECR_DEPLOY == 'false' }}
+          exit: code 1
+    - name: Resault scan
+      run: |
+        if: ${{  ECR_DEPLOY == 'true' }}
+          run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
 
 #     - name: Build PHP image to Amazon ECR
