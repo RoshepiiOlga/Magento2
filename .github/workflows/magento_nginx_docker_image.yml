@@ -58,8 +58,9 @@ jobs:
         if: ${{  github.docker-image-scan.action_status != 'critical' && env.ECR_DEPLOY == 'true' }}
           run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     - name: test
-      if: ${{ env.ECR_DEPLOY == 'false' }}
-          exit 1
+      run: |
+        if: ${{ env.ECR_DEPLOY == 'false' }}
+            exit 1
    
 
 
