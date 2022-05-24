@@ -63,7 +63,7 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
         IMAGE_TAG_PHP: php
-      run: docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP -t $ECR_REGISTRY/$ECR_REPOSITORY:latest
+      run: docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP .
     
 #     - name: Scan image php
 #       uses: anchore/scan-action@v3
