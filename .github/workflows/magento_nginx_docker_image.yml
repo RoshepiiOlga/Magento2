@@ -44,15 +44,15 @@ jobs:
       id: docker-image-scan
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        fail-build: false
-        severity-cutoff: critical   
+        fail-build: true
+      #  severity-cutoff: critical   
       
     - name: Resault scan and push docker images nginx
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
         IMAGE_TAG: nginx
-      if: ${{  github.docker-image-scan.action_status != 'critical' }}
+      if: ${{  github.docker-image-scan.action_status != 'critical' ||  github.docker-image-scan.action_status != 'high' }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
               
     - name: test           
