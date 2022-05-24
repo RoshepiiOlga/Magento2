@@ -54,12 +54,15 @@ jobs:
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
         IMAGE_TAG:      nginx
       run: |
-        if: ${{ (github.docker-image-scan.action_status != 'critical') || (env.ECR_DEPLOY == true) }}
+        if: ${{ (github.docker-image-scan.action_status != 'critical') }}
           run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
     - name: test
       run: |
-        if: ${{ env.ECR_DEPLOY == 'false' }}
-            exit 1
+        if: ${{ (github.docker-image-scan.action_status == 'critical') }}
+        echo "Images has critical status."
+        
+  #      if: ${{ env.ECR_DEPLOY == 'false' }}
+  #          exit 1
    
 
 
