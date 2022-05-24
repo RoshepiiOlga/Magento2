@@ -44,8 +44,8 @@ jobs:
       id: docker-image-scan
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        fail-build: true
-      #  severity-cutoff: critical   
+      #  fail-build: true
+        severity-cutoff: critical   
       
     - name: Resault scan and push docker images nginx
       env:
