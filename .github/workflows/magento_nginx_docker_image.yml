@@ -92,7 +92,9 @@ jobs:
       
     - name: Manuall test           
       if: ${{ env.TAGS == 'create images' }}
-      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG        
+      run: |
+        echo ${{env.TAGS}}
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG        
 #     - name: Manuall test           
 #       if: ${{ (github.docker-image-scan.action_status == 'critical') }}
 #       run: echo "Images has critical status."
