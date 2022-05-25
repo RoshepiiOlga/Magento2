@@ -38,8 +38,7 @@ on:
 env:
   LEVEL: ${{ github.event.inputs.logLevel }}
   TAGS: ${{ github.event.inputs.tags }}
-  ENVIRONMENT: ${{ github.event.inputs.environment }}  
-  
+  ENVIRONMENT: ${{ github.event.inputs.environment }}    
   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
   ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
   IMAGE_TAG: nginx
