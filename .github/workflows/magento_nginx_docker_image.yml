@@ -12,7 +12,6 @@ on:
         type: choice
         options:
         - create a new image
-        - debug 
       tags:
         description: 'Test scenario tags'
         required: false 
@@ -64,13 +63,13 @@ jobs:
     - name: Resault scan and push docker images nginx
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      if: ${{ ( github.docker-image-scan.action_status != 'critical') }}
+      if: ${{ ( github.docker-image-scan.action_status != 'critical') && (github.event.inputs.tags != true ) }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
       
     - name: Manuall test 
       env:
          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      if: ${{ ( github.docker-image-scan.action_status == 'critical') && (github.event.inputs.logLevel == 'create a new image') }}
+      if: ${{ ( github.docker-image-scan.action_status == 'critical') && (github.event.inputs.logLevel == 'create a new image') && (github.event.inputs.tags == true) }}
       run: |
         echo "Log level: ${{ github.event.inputs.logLevel }}"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG        
