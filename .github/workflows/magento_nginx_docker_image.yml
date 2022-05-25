@@ -7,7 +7,7 @@ on:
     inputs:
       git-ref:
         description: Manuall starting (Optional)    
-        required: true
+        required: false
 #       logLevel:
 #         description: 'Manuall starting'     
 #         required: true
