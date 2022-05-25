@@ -8,6 +8,7 @@ on:
       git-ref:
         description: Manuall starting (Optional)    
       environment:
+        description: 'Environment to run tests against'
         type: environment
         required: true
 
@@ -56,7 +57,7 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
         IMAGE_TAG: nginx
-      if: ${{ ( github.docker-image-scan.action_status != 'critical') && ( required == 'true' )}} #&&  (env.ECR_DEPLOY == 'true')
+      if: ${{ ( github.docker-image-scan.action_status != 'critical')}} #&&  (env.ECR_DEPLOY == 'true')
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
               
     - name: test           
