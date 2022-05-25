@@ -62,19 +62,11 @@ jobs:
     - name: Automate push php in the ecr
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      if: ${{  github.docker-image-scan.action_status != 'critical' }}
-      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP
-            
-    - name: Manual push php in the ecr
-      env:
-         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      if: ${{ ( github.docker-image-scan.action_status == 'critical') && (github.event.inputs.tags == true) }}
-      run: |
-        echo "Log level: ${{ github.event.inputs.logLevel }}"
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP    
+      if: ${{ ( github.docker-image-scan.action_status != 'critical') || ( github.docker-image-scan.action_status != 'high') || (github.event.inputs.tags == true) }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP 
         
     - name: Manual check for high vulnerability
-      if: ${{ ( github.docker-image-scan.action_status == 'critical') && (github.event.inputs.tags != true) }}
+      if: ${{ (github.event.inputs.tags != true) && ( github.docker-image-scan.action_status == 'critical') || github.docker-image-scan.action_status == 'high'}}
       run: |
         echo "Image has high vulnerability"
          
