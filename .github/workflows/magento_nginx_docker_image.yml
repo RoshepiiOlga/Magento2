@@ -11,17 +11,13 @@ on:
         default: 'warning' 
         type: choice
         options:
-        - info
-        - warning
+        - create a new image
         - debug 
       tags:
         description: 'Test scenario tags'
         required: false 
         type: boolean
-      environment:
-        description: 'Environment to run tests against true or false'
-        type: environment
-        required: true 
+
 #     inputs:
 #       test_input1:
 #         description: 'Name the test'
@@ -39,7 +35,15 @@ on:
 #         description: 'Environment to run tests against'
 #         type: environment
 #         required: false
-    
+env:
+  LEVEL: ${{ github.event.inputs.logLevel }}
+  TAGS: ${{ github.event.inputs.tags }}
+  ENVIRONMENT: ${{ github.event.inputs.environment }}  
+  
+  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+  ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+  IMAGE_TAG: nginx
+ 
 name: Node Project `nginx` CI/CD on ECR 
 
 jobs:
@@ -81,16 +85,19 @@ jobs:
         severity-cutoff: critical   
       
     - name: Resault scan and push docker images nginx
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-        IMAGE_TAG: nginx
+#       env:
+#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+#         IMAGE_TAG: nginx
       if: ${{ ( github.docker-image-scan.action_status != 'critical')}} #&&  (env.ECR_DEPLOY == 'true')
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
-              
-    - name: test           
-      if: ${{ (github.docker-image-scan.action_status == 'critical') }}
-      run: echo "Images has critical status."
+      
+    - name: Manuall test           
+      if: ${{ env.TAGS == 'create images' }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG        
+#     - name: Manuall test           
+#       if: ${{ (github.docker-image-scan.action_status == 'critical') }}
+#       run: echo "Images has critical status."
       
 #     - name: test variable
 #       if: ${{ env.ECR_DEPLOY == 'false' }}
