@@ -11,7 +11,7 @@ env:
   ECS_SERVICE: magento-ecs_service                
   ECS_CLUSTER: magento-ecs-cluster                
   ECS_TASK_DEFINITION:  magento_ecs_task_github_task                                         
-  CONTAINER_NAME: sigma_magento-nginx
+  CONTAINER_NAME: nginx
   IMAGE_TAG: nginx
  # CONTAINER_NAME_PHP: sigma_magento-php_fpm            
                                              
@@ -58,8 +58,8 @@ jobs:
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: task-definition.json
-        container-name: my-container
+        task-definition: ecs-task-definition.json
+        container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
