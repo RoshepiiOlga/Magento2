@@ -17,28 +17,9 @@ on:
         description: 'Test scenario tags'
         required: false 
         type: boolean
-
-#     inputs:
-#       test_input1:
-#         description: 'Name the test'
-#         required: true
-#         default: 'test1'
-#       testInput2:
-#         description: 'Description'
-#         required: true
-#         default: 'create images'
-      
-#     inputs:
-#       git-ref:
-#         description: Manuall starting (Optional)    
-#       environment:
-#         description: 'Environment to run tests against'
-#         type: environment
-#         required: false
+        
 env:
   LEVEL: ${{ github.event.inputs.logLevel }}
-#   TAGS: ${{ github.event.inputs.tags }}
-#   ENVIRONMENT: ${{ github.event.inputs.environment }}    
   ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
   IMAGE_TAG: nginx
  
@@ -69,8 +50,6 @@ jobs:
     - name: Build Nginx image
       env:
         ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
-#         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-#         IMAGE_TAG:      nginx
       id: build-nginx_image        
       run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .         
            
@@ -82,28 +61,20 @@ jobs:
         fail-build: false
         severity-cutoff: critical   
       
-#     - name: Resault scan and push docker images nginx
-#       env:
-#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-# #         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-# #         IMAGE_TAG: nginx
-#       if: ${{ ( github.docker-image-scan.action_status != 'critical')}} #&&  (env.ECR_DEPLOY == 'true')
-#       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
+    - name: Resault scan and push docker images nginx
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      if: ${{ ( github.docker-image-scan.action_status != 'critical') }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
       
     - name: Manuall test 
       env:
          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      if: ${{ github.event.inputs.logLevel == 'create a new image' }}
+      if: ${{ ( github.docker-image-scan.action_status == 'critical') && (github.event.inputs.logLevel == 'create a new image') }}
       run: |
         echo "Log level: ${{ github.event.inputs.logLevel }}"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG        
-#     - name: Manuall test           
-#       if: ${{ (github.docker-image-scan.action_status == 'critical') }}
-#       run: echo "Images has critical status."
-      
-#     - name: test variable
-#       if: ${{ env.ECR_DEPLOY == 'false' }}
-#       run: exit 1
+
       
 
 
