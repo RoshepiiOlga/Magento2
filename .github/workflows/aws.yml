@@ -8,10 +8,11 @@ on:
 env:
   AWS_REGION: eu-west-1                   
   ECR_REPOSITORY: ${{ secrets.REPO_NAME }}           
-  ECS_SERVICE: magento_ecs_service                
+  ECS_SERVICE: magento-ecs_service                
   ECS_CLUSTER: magento-ecs-cluster                
-  ECS_TASK_DEFINITION:  magento_ecs_task_github:5                                         
+  ECS_TASK_DEFINITION:  magento_ecs_task_github_task                                         
   CONTAINER_NAME: sigma_magento-nginx
+  IMAGE_TAG: nginx
  # CONTAINER_NAME_PHP: sigma_magento-php_fpm            
                                              
 
@@ -48,6 +49,7 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+    
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -55,6 +57,7 @@ jobs:
         task-definition: ecs-task-definition.json
         container-name: sigma_magento-nginx
         image: ${{ steps.build-image.outputs.image }}
+        
 #     - name: Fill in the new image ID in the Amazon ECS task definition
 #       id: task-def
 #       uses: aws-actions/amazon-ecs-render-task-definition@v1
