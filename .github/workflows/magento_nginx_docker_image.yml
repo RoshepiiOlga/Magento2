@@ -32,52 +32,49 @@ jobs:
       packages: write
       
     steps:
-    - name:  test
-      run: |
-        echo "Tags: ${{ github.event.inputs.tags }}"
-#     - name: Checkout
-#       uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
 
-#     - name: Configure AWS credentials
-#       uses: aws-actions/configure-aws-credentials@v1
-#       with:
-#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#         aws-region: eu-west-1
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-1
 
-#     - name: Login to Amazon ECR
-#       id: login-ecr
-#       uses: aws-actions/amazon-ecr-login@v1
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
           
-#     - name: Build Nginx image
-#       env:
-#         ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
-#       id: build-nginx_image        
-#       run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .         
+    - name: Build Nginx image
+      env:
+        ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
+      id: build-nginx_image        
+      run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .         
            
-#     - name: Scan image
-#       uses: anchore/scan-action@v3
-#       id: docker-image-scan
-#       with:
-#         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-#         fail-build: false
-#         severity-cutoff: critical   
+    - name: Scan image
+      uses: anchore/scan-action@v3
+      id: docker-image-scan
+      with:
+        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        fail-build: true
+        severity-cutoff: critical   
       
-#     - name: Resault scan and push docker images nginx
-#       env:
-#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#       if: ${{ ( github.docker-image-scan.action_status != 'critical') && (github.event.inputs.tags != true ) }}
-#       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
+    - name: Resault scan and push docker images nginx
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      if: ${{ ( github.docker-image-scan.action_status != 'critical') }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
       
-#     - name: Manuall test 
-#       env:
-#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#       if: ${{ ( github.docker-image-scan.action_status == 'critical') && (github.event.inputs.logLevel == 'create a new image') && (github.event.inputs.tags == true) }}
-#       run: |
-#         echo "Log level: ${{ github.event.inputs.logLevel }}"
-#         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG        
+    - name: Manuall test 
+      env:
+         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      if: ${{ ( github.docker-image-scan.action_status == 'critical') && (github.event.inputs.tags == true) }}
+      run: |
+        echo "Log level: ${{ github.event.inputs.logLevel }}"
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG        
 
-      
+
 
 
 
