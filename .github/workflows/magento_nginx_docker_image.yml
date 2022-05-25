@@ -39,7 +39,6 @@ env:
   LEVEL: ${{ github.event.inputs.logLevel }}
   TAGS: ${{ github.event.inputs.tags }}
   ENVIRONMENT: ${{ github.event.inputs.environment }}    
-  ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
   ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
   IMAGE_TAG: nginx
  
@@ -70,8 +69,8 @@ jobs:
     - name: Build Nginx image
       env:
         ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-        IMAGE_TAG:      nginx
+#         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+#         IMAGE_TAG:      nginx
       id: build-nginx_image        
       run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .         
            
@@ -84,8 +83,8 @@ jobs:
         severity-cutoff: critical   
       
     - name: Resault scan and push docker images nginx
-#       env:
-#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
 #         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
 #         IMAGE_TAG: nginx
       if: ${{ ( github.docker-image-scan.action_status != 'critical')}} #&&  (env.ECR_DEPLOY == 'true')
