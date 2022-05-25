@@ -13,10 +13,10 @@ on:
         options:
         - create a new image
         - debug 
-      tags:
-        description: 'Test scenario tags'
-        required: false 
-        type: boolean
+#       tags:
+#         description: 'Test scenario tags'
+#         required: false 
+#         type: boolean
 
 #     inputs:
 #       test_input1:
@@ -37,8 +37,8 @@ on:
 #         required: false
 env:
   LEVEL: ${{ github.event.inputs.logLevel }}
-  TAGS: ${{ github.event.inputs.tags }}
-  ENVIRONMENT: ${{ github.event.inputs.environment }}    
+#   TAGS: ${{ github.event.inputs.tags }}
+#   ENVIRONMENT: ${{ github.event.inputs.environment }}    
   ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
   IMAGE_TAG: nginx
  
@@ -91,9 +91,9 @@ jobs:
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
       
     - name: Manuall test           
-      if: ${{ env.TAGS == 'create images' }}
+      if: ${{ github.event.inputs.logLevel == 'create images' }}
       run: |
-        echo ${{env.TAGS}}
+        echo "Log level: ${{ github.event.inputs.logLevel }}"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG        
 #     - name: Manuall test           
 #       if: ${{ (github.docker-image-scan.action_status == 'critical') }}
