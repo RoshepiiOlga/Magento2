@@ -5,12 +5,21 @@ on:
     branches: [ main ]
   workflow_dispatch:
     inputs:
-      git-ref:
-        description: Manuall starting (Optional)    
-      environment:
-        description: 'Environment to run tests against'
-        type: environment
-        required: false
+      test_input1:
+        description: 'Enter anything.'
+        required: true
+        default: 'test1'
+      testInput2:
+        description: 'Enter anything.'
+        required: true
+        default: 'test2'
+#     inputs:
+#       git-ref:
+#         description: Manuall starting (Optional)    
+#       environment:
+#         description: 'Environment to run tests against'
+#         type: environment
+#         required: false
     
 name: Node Project `nginx` CI/CD on ECR 
 
