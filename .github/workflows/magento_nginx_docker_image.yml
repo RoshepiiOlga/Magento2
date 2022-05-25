@@ -5,14 +5,33 @@ on:
     branches: [ main ]
   workflow_dispatch:
     inputs:
-      test_input1:
-        description: 'Enter anything.'
+      logLevel:
+        description: 'Log level'     
         required: true
-        default: 'test1'
-      testInput2:
-        description: 'Enter anything.'
-        required: true
-        default: 'test2'
+        default: 'warning' 
+        type: choice
+        options:
+        - info
+        - warning
+        - debug 
+      tags:
+        description: 'Test scenario tags'
+        required: false 
+        type: boolean
+      environment:
+        description: 'Environment to run tests against true or false'
+        type: environment
+        required: true 
+#     inputs:
+#       test_input1:
+#         description: 'Name the test'
+#         required: true
+#         default: 'test1'
+#       testInput2:
+#         description: 'Description'
+#         required: true
+#         default: 'create images'
+      
 #     inputs:
 #       git-ref:
 #         description: Manuall starting (Optional)    
