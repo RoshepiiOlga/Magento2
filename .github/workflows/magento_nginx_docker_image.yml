@@ -82,16 +82,18 @@ jobs:
         fail-build: false
         severity-cutoff: critical   
       
-    - name: Resault scan and push docker images nginx
+#     - name: Resault scan and push docker images nginx
+#       env:
+#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+# #         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+# #         IMAGE_TAG: nginx
+#       if: ${{ ( github.docker-image-scan.action_status != 'critical')}} #&&  (env.ECR_DEPLOY == 'true')
+#       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
+      
+    - name: Manuall test 
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-#         IMAGE_TAG: nginx
-      if: ${{ ( github.docker-image-scan.action_status != 'critical')}} #&&  (env.ECR_DEPLOY == 'true')
-      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
-      
-    - name: Manuall test           
-      if: ${{ github.event.inputs.logLevel == 'create images' }}
+      if: ${{ github.event.inputs.logLevel.options == 'create images' }}
       run: |
         echo "Log level: ${{ github.event.inputs.logLevel }}"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG        
