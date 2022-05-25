@@ -57,51 +57,25 @@ jobs:
       id: docker-image-scan
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        fail-build: true
+        fail-build: false
         severity-cutoff: critical   
       
-    - name: Resault scan and push docker images nginx
+    - name: Automate push nginx in the ecr
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       if: ${{ ( github.docker-image-scan.action_status != 'critical') }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG 
       
-    - name: Manuall test 
+    - name: Manual push nginx in the ecr
       env:
          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       if: ${{ ( github.docker-image-scan.action_status == 'critical') && (github.event.inputs.tags == true) }}
       run: |
         echo "Log level: ${{ github.event.inputs.logLevel }}"
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG        
-
-
-
-
-
-#     - name: Build PHP image to Amazon ECR
-#   #    id: build-php_image
-#       env:
-#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-#         IMAGE_TAG_PHP: php
-#       run: docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP .
-    
-#     - name: Scan image php
-#       uses: anchore/scan-action@v3
-#       id: docker-image-scan_php
-#       continue-on-error: true
-#       with:
-#         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
-#         fail-build: false
-#         severity-cutoff: critical    
-      
-#     - name: Resault scan and push docker images php
-#       env:
-#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#         ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-#         IMAGE_TAG_PHP: php
-#       if: ${{  github.docker-image-scan.action_status != 'critical' }}
-#       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP
-    
-  
-  
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG    
+        
+    - name: Manual check for high vulnerability
+      if: ${{ ( github.docker-image-scan.action_status == 'critical') && (github.event.inputs.tags != true) }}
+      run: |
+        echo "Image has high vulnerability"
+         
