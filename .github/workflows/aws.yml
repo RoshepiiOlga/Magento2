@@ -12,7 +12,7 @@ env:
   ECS_CLUSTER: magento-ecs-cluster                
   ECS_TASK_DEFINITION:  magento_ecs_task_github:5                                         
   CONTAINER_NAME: sigma_magento-nginx
-  CONTAINER_NAME_PHP: sigma_magento-php_fpm            
+ # CONTAINER_NAME_PHP: sigma_magento-php_fpm            
                                              
 
 permissions:
