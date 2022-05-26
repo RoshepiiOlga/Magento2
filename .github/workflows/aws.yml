@@ -46,7 +46,7 @@ jobs:
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: magento_ecs_task_github:4
+        task-definition: ecs-task-definition.json
         container-name: magento_ecr_image_nginx
 #         image: nginx
 #         port: 80
