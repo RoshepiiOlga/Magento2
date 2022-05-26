@@ -1,23 +1,10 @@
 name: Deploy to Amazon ECS
 
 on:
-#   push:
-#     branches: [ main ]
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'     
-        required: true
-        default: 'warning' 
-        type: choice
-        options:
-        - create a new image
-      tags:
-        description: 'Test scenario tags'
-        required: false 
-        type: boolean
 
 env:
   AWS_REGION: eu-west-1                   
@@ -27,7 +14,6 @@ env:
   ECS_TASK_DEFINITION:  magento_ecs_task_github_task                                         
   CONTAINER_NAME: nginx
   IMAGE_TAG: nginx
-  LEVEL: ${{ github.event.inputs.logLevel }}
  # ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
  # CONTAINER_NAME_PHP: sigma_magento-php_fpm            
                                              
@@ -74,8 +60,8 @@ jobs:
       uses: pagarme/ecs-task-def-replacements@main
       id: task
       with:
-        cluster-name: ${{ env.ECS_CLUSTER }}
-        service-name: ${{ env.ECS_SERVICE }}
+        cluster-name: magento-ecs-cluster
+        service-name: magento-ecs_service
         replacements: |
           {
             "containerDefinitions": [{
@@ -86,6 +72,6 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE }}
-        cluster: ${{ env.ECS_CLUSTER }}
+        service: magento-ecs_service
+        cluster: magento-ecs-cluster
         wait-for-service-stability: true
