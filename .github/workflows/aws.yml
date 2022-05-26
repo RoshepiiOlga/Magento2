@@ -90,9 +90,9 @@ jobs:
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ${{ steps.render-image-in-task-def.outputs.task-definition }}
+        task-definition: ecs-task-definition.json
         container-name: ${{ env.CONTAINER_NAME }}
-        image: image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       #  image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
