@@ -73,7 +73,9 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       if: ${{ ( github.docker-image-scan.action_status != 'critical') || ( github.docker-image-scan.action_status != 'high') || (github.event.inputs.tags == true) }}
-      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG      
+      run: |
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG    
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         
     - name: Manual check for high vulnerability
       if: ${{ (github.event.inputs.tags != true) && ( github.docker-image-scan.action_status == 'critical') || github.docker-image-scan.action_status == 'high'}}
@@ -96,7 +98,7 @@ jobs:
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ steps.cgafrica-new-backend-task.outputs.task-definition }}
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: ${{ env.ECS_SERVICE }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
