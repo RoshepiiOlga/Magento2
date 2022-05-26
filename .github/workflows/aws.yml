@@ -38,14 +38,20 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
-        role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
-        set_repo_policy: true
+ #       role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
+#        set_repo_policy: true
  #       role-session-name: Olga_Ecs-to-Ecr
         
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-      
+    
+    - name: Configure AWS credentials to task definition
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
+        aws-region: ${{ env.AWS_REGION }}
+        
     - name: Render Amazon ECS task definition for first container nginx
       id: render-web-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
