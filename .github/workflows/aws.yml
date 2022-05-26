@@ -62,8 +62,9 @@ jobs:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
 
     - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
       with:
+        set_repo_policy: true
         task-definition: ${{ steps.render-app-container.outputs.task-definition }}
         service: magento-ecs_service
         cluster: magento-ecs-cluster
