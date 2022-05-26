@@ -90,7 +90,7 @@ jobs:
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ecs-task-definition.json
+        task-definition: magento_ecs_task_github
         container-name: ${{ env.CONTAINER_NAME }}
         image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       #  image: ${{ steps.build-image.outputs.image }}
