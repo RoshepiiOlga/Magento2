@@ -14,6 +14,7 @@ env:
   ECS_TASK_DEFINITION:  magento_ecs_task_github_task                                         
   CONTAINER_NAME: nginx
   IMAGE_TAG: nginx
+  
  # ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
  # CONTAINER_NAME_PHP: sigma_magento-php_fpm            
                                              
@@ -28,6 +29,12 @@ jobs:
     environment: production
 
     steps:
+    - name: configureawscredentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
+        role-session-name: Olga_Ecs-to-Ecr
+        aws-region: ${{ env.AWS_REGION }}
     - name: Checkout
       uses: actions/checkout@v3
 
