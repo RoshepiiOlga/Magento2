@@ -92,7 +92,7 @@ jobs:
       with:
         task-definition: ${{ steps.render-image-in-task-def.outputs.task-definition }}
         container-name: ${{ env.CONTAINER_NAME }}
-        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        image: image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       #  image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
