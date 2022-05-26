@@ -28,7 +28,7 @@ env:
   CONTAINER_NAME: nginx
   IMAGE_TAG: nginx
   LEVEL: ${{ github.event.inputs.logLevel }}
-  ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
+ # ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
  # CONTAINER_NAME_PHP: sigma_magento-php_fpm            
                                              
 
