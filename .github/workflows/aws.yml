@@ -1,9 +1,23 @@
 name: Deploy to Amazon ECS
 
 on:
-  push:
-    branches:
-      - main
+#   push:
+#     branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning' 
+        type: choice
+        options:
+        - create a new image
+      tags:
+        description: 'Test scenario tags'
+        required: false 
+        type: boolean
 
 env:
   AWS_REGION: eu-west-1                   
@@ -13,6 +27,7 @@ env:
   ECS_TASK_DEFINITION:  magento_ecs_task_github_task                                         
   CONTAINER_NAME: nginx
   IMAGE_TAG: nginx
+  LEVEL: ${{ github.event.inputs.logLevel }}
  # CONTAINER_NAME_PHP: sigma_magento-php_fpm            
                                              
 
@@ -40,19 +55,34 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
+    - name: Build Nginx image
+      env:
+        ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
+      id: build-nginx_image        
+      run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .         
+           
+    - name: Scan image
+      uses: anchore/scan-action@v3
+      id: docker-image-scan
+      with:
+        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        fail-build: false
+        severity-cutoff: critical   
+      
+    - name: Automate and manual push nginx in the ecr
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: nginx
+      if: ${{ ( github.docker-image-scan.action_status != 'critical') || ( github.docker-image-scan.action_status != 'high') || (github.event.inputs.tags == true) }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG      
+        
+    - name: Manual check for high vulnerability
+      if: ${{ (github.event.inputs.tags != true) && ( github.docker-image-scan.action_status == 'critical') || github.docker-image-scan.action_status == 'high'}}
       run: |
-        docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG . 
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        echo "Image has high vulnerability"
    
     - name: Download task definition
       run: |
-        aws ecs describe-task-definition --task-definition magento_ecs_task_github:4 --query taskDefinition > task-definition.json
+        aws ecs describe-task-definition --task-definition  magento_ecs_task_github --query taskDefinition > ecs-task-definition.json
     
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
@@ -60,14 +90,15 @@ jobs:
       with:
         task-definition: ecs-task-definition.json
         container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
+        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      #  image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: my-service
-        cluster: my-cluster
+        service: ${{ env.ECS_SERVICE }}
+        cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
 #     - name: Fill in the new image ID in the Amazon ECS task definition
 #       id: task-def
