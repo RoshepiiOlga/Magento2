@@ -29,12 +29,6 @@ jobs:
     environment: production
 
     steps:
-    - name: configureawscredentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
-        role-session-name: Olga_Ecs-to-Ecr
-        aws-region: ${{ env.AWS_REGION }}
     - name: Checkout
       uses: actions/checkout@v3
 
@@ -44,7 +38,9 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
-
+        role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
+        role-session-name: Olga_Ecs-to-Ecr
+        
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
