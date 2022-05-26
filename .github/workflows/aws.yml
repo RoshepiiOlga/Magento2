@@ -56,20 +56,32 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
    
-    - name: Create task definition with nginx
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: magento_ecs_task_nginx-php
-        container-name: ${{ env.CONTAINER_NAME }}
-        image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        port: 80
-        network: sigma_magento-php_fpm:sigma_magento-php_fpm
-      env: 
-        PHP_FPM_HOST: sigma_magento-php_fpm
-        PHP_FPM_PORT: 9000
-      #  image: ${{ steps.build-image.outputs.image }}
+#     - name: Create task definition with nginx
+#       id: task-def
+#       uses: aws-actions/amazon-ecs-render-task-definition@v1
+#       with:
+#         task-definition: magento_ecs_task_nginx-php
+#         container-name: nginx
+#         image: nginx
+#         port: 80
+#         network: sigma_magento-php_fpm:sigma_magento-php_fpm
+#       env: 
+#         PHP_FPM_HOST: sigma_magento-php_fpm
+#         PHP_FPM_PORT: 9000
+#       #  image: ${{ steps.build-image.outputs.image }}
 
+    - name: Retrieve trask def
+      uses: pagarme/ecs-task-def-replacements@main
+      id: task
+      with:
+        cluster-name: ${{ env.ECS_CLUSTER }}
+        service-name: ${{ env.ECS_SERVICE }}
+        replacements: |
+          {
+            "containerDefinitions": [{
+              "image": "nginx"
+            }]
+          }
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
