@@ -14,7 +14,7 @@ on:
         - create a new image
       tags:
         description: 'Test scenario tags'
-        required: false 
+      #  required: false 
         type: boolean
         
 env:
