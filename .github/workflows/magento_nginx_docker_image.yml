@@ -59,12 +59,13 @@ jobs:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         fail-build: false
         required: false
-        severity-cutoff: critical, high   
+    #    severity-cutoff: critical, high   
+        severity: HIGH,CRITICAL
       
     - name: Automate and manual push nginx in the ecr
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      if: ${{ ( github.docker-image-scan.action_status != 'critical') || ( github.docker-image-scan.action_status != 'high') || (github.event.inputs.tags == true) }}
+      if: ${{ ( github.docker-image-scan.action_status != 'CRITICAL') || ( github.docker-image-scan.action_status != 'HIGH') || (github.event.inputs.tags == true) }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG      
         
          
