@@ -70,10 +70,10 @@ jobs:
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
       with:
-        set_repo_policy: true
-        task-definition:  ecs-task-definition.json
+#         set_repo_policy: true
+        task-definition: ${{ steps.render-app-container.outputs.task-definition }}
         service: magento-ecs_service
         cluster: magento-ecs-cluster
         wait-for-service-stability: true
-        codedeploy-application: my-codedeploy-application
-        codedeploy-deployment-group: my-codedeploy-deployment-group
+#         codedeploy-application: my-codedeploy-application
+#         codedeploy-deployment-group: my-codedeploy-deployment-group
