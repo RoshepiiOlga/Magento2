@@ -59,7 +59,7 @@ jobs:
       with:
         required: false
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        fail-build: true        
+        fail-build: false        
     #    severity-cutoff: critical, high   
         severity: HIGH, CRITICAL, MEDIUM
     - name: Automate and manual push nginx in the ecr
