@@ -71,7 +71,7 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
       with:
         set_repo_policy: true
-        task-definition: ${{ steps.render-app-container.outputs.task-definition }}
+        task-definition:  ecs-task-definition.json
         service: magento-ecs_service
         cluster: magento-ecs-cluster
         wait-for-service-stability: true
