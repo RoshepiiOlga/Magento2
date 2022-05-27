@@ -49,6 +49,8 @@ jobs:
         
     - name: Render Amazon ECS task definition for first container nginx
       id: render-web-container
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ecs-task-definition.json
