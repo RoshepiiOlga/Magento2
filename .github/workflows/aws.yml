@@ -50,7 +50,7 @@ jobs:
       id: render-web-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: .aws/ecs-task-definition.json
+        task-definition: aws/ecs-task-definition.json
         container-name: magento_ecr_image_nginx
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         environment-variables: |
