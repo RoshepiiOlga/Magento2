@@ -58,7 +58,8 @@ jobs:
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         fail-build: false
-        severity-cutoff: critical   
+        required: false
+        severity-cutoff: critical/high    
       
     - name: Automate and manual push nginx in the ecr
       env:
@@ -66,8 +67,4 @@ jobs:
       if: ${{ ( github.docker-image-scan.action_status != 'critical') || ( github.docker-image-scan.action_status != 'high') || (github.event.inputs.tags == true) }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG      
         
-    - name: Manual check for high vulnerability
-      if: ${{ (github.event.inputs.tags != true) && ( github.docker-image-scan.action_status == 'critical') || github.docker-image-scan.action_status == 'high'}}
-      run: |
-        echo "Image has high vulnerability"
          
