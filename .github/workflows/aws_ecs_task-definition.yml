@@ -44,13 +44,13 @@ jobs:
       with:
         role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
         aws-region: ${{ env.AWS_REGION }}
-        role-duration-seconds: 1200
+       # role-duration-seconds: 1200
         
     - name: Render Amazon ECS task definition for first container nginx
       id: render-web-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: aws/ecs-task-definition.json
+        task-definition: ecs-task-definition.json
         container-name: magento_ecr_image_nginx
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
         environment-variables: |
