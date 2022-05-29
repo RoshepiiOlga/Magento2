@@ -54,7 +54,7 @@ jobs:
 #       run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .         
     
     - name: Automate and manual push nginx in the ecr
-      run: echo "${{env.WORKFLOW_DISPATCH_TAG.status}}"
+      run: echo "${{ github.event.inputs.tags }}"
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
     #  if: ${{ env.WORKFLOW_DISPATCH_TAG == true }}
