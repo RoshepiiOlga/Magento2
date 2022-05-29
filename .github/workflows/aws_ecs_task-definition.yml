@@ -53,8 +53,7 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ecs-task-definition.json
-        container-name: nginx
-        #magento_ecr_image_nginx
+        container-name: magento_ecr_image_nginx
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 #         environment-variables: |
 #             PHP_FPM_HOST=sigma_magento-php_fpm
@@ -65,18 +64,15 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ steps.render-web-container.outputs.task-definition }}
-        container-name: php
-        #sigma_magento-php_fpm
+        container-name: sigma_magento-php_fpm
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
       with:
-#         set_repo_policy: true
-        task-definition: ${{ steps.render-web-container.outputs.task-definition }}
+        set_repo_policy: true
+        task-definition: ${{ steps.render-app-container.outputs.task-definition }}
         service: magento-ecs_service
         cluster: magento-ecs-cluster
         wait-for-service-stability: true
         force-new-deployment: true
-#         codedeploy-application: my-codedeploy-application
-#         codedeploy-deployment-group: my-codedeploy-deployment-group
