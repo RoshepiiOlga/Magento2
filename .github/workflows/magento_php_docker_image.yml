@@ -50,23 +50,25 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP .
     
+    - name: Manual push php in the ecr without scan
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      if: ${{ github.event.inputs.tags == 'true' }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP
+        
     - name: Scan image php
+      if: ${{ github.event.inputs.tags == 'false' }}
       uses: anchore/scan-action@v3
       id: docker-image-scan_php
       continue-on-error: true
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
-        fail-build: false
-        severity-cutoff: critical    
+        fail-build: true
+        severity-cutoff:  HIGH, CRITICAL, MEDIUM    
       
-    - name: Automate push php in the ecr
+    - name: Push images php with scan
+      if: ${{ github.event.inputs.tags == 'false' }}
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      if: ${{ ( github.docker-image-scan.action_status != 'critical') || ( github.docker-image-scan.action_status != 'high') || (github.event.inputs.tags == true) }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP 
-        
-    - name: Manual check for high vulnerability
-      if: ${{ (github.event.inputs.tags != true) && ( github.docker-image-scan.action_status == 'critical') || github.docker-image-scan.action_status == 'high'}}
-      run: |
-        echo "Image has high vulnerability"
          

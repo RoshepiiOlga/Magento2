@@ -49,29 +49,30 @@ jobs:
           
     - name: Build Nginx image
       env:
-        ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       id: build-nginx_image        
-      run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .         
-           
+      run: |
+        docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .  
+        echo "${{ github.event.inputs.tags }}"
+    
+    - name: Manual push nginx in the ecr without scanning
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      if: ${{ github.event.inputs.tags == 'true' }}
+      run: |
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG    
+
     - name: Scan image
+      if: ${{ github.event.inputs.tags == 'false' }}
       uses: anchore/scan-action@v3
       id: docker-image-scan
       with:
-        #required: false
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        fail-build: true        
-    #    severity-cutoff: critical, high   
+        fail-build: true         
         severity: HIGH, CRITICAL, MEDIUM
     
-    - name: Automate and manual push nginx in the ecr
-      if: ${{  env.WORKFLOW_DISPATCH_TAG == true }}
-      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG  
-      
-    - name: Automate and manual push nginx in the ecr
-#       env:
-#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-     
-      if: ${{ ( github.docker-image-scan.action_status == steps.docker-image-scan.outputs.severity ) }} 
-      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG      
-        
-         
+    - name: Push images nginx with scanning
+      if: ${{ github.event.inputs.tags == 'false' }}
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG              

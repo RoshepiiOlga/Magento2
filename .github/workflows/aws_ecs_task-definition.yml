@@ -1,11 +1,24 @@
 name: Deploy to Amazon ECS
 
 on:
-  push:
-    branches: [ main ]
+#   push:
+#     branches: [ main ]
   pull_request:
     branches: [ main ]
-
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning' 
+        type: choice
+        options:
+        - create a new image
+      tags:
+        description: 'Test scenario tags'
+        required: false 
+        type: boolean
+        
 env:
   AWS_REGION: eu-west-1                   
   ECR_REPOSITORY: ${{ secrets.REPO_NAME }}           
@@ -71,7 +84,11 @@ jobs:
         image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:php
         run: |
           echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
-
+          
+    - name: delete_task_definition
+      run: | 
+        aws ecs deregister-task-definition --task-definition magento_ecs_task_github:11
+    
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
       with:
