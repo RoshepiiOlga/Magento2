@@ -1,0 +1,109 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "",
+			"Effect": "Allow",
+			"Principal": {
+				"Service": "ecs-tasks.amazonaws.com",
+				"AWS": "arn:aws:iam::908410081654:user/magento_git_user"
+			},
+			"Action": "sts:AssumeRole",
+			"Condition": {
+				"StringEquals": {
+					"sts:ExternalId": "RoshepiiOlga/Magento2"
+				}
+			}
+		}
+	]
+}
+#####################################################################
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "",
+			"Effect": "Allow",
+			"Principal": {
+				"Service": "ecs-tasks.amazonaws.com"
+			},
+			"Action": "sts:AssumeRole"
+		}
+	]
+}
+
+(magento_role_ecs_task-definition_github-action)
+##########################################################
+working create image nginx
+on:
+#   push:
+#     branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning' 
+        type: choice
+        options:
+        - create a new image
+      tags:
+        description: 'Test scenario tags'
+        required: false 
+        type: boolean
+        
+env:
+  LEVEL: ${{ github.event.inputs.logLevel }}
+  ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+  IMAGE_TAG: nginx
+ 
+name: Node Project `nginx` CI/CD on ECR 
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+          
+    - name: Build Nginx image
+      env:
+        ECR_REGISTRY:   ${{ steps.login-ecr.outputs.registry }}
+      id: build-nginx_image        
+      run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .         
+           
+    - name: Scan image
+      uses: anchore/scan-action@v3
+      id: docker-image-scan
+      with:
+        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        fail-build: false
+        severity-cutoff: critical   
+      
+    - name: Automate and manual push nginx in the ecr
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      if: ${{ ( github.docker-image-scan.action_status != 'critical') || ( github.docker-image-scan.action_status != 'high') || (github.event.inputs.tags == true) }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG      
+        
+  - name: Manual check for high vulnerability
+      if: ${{ (github.event.inputs.tags != true) && ( github.docker-image-scan.action_status == 'critical') || github.docker-image-scan.action_status == 'high'}}
+      run: |
+        echo "Image has high vulnerability"

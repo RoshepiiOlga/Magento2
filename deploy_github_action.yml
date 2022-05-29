@@ -88,4 +88,30 @@ jobs:
 #       if: ${{ (github.event.inputs.tags == true) && ( github.docker-image-scan.action_status == 'critical') }}
 #       run: |
 #         echo "Log level: ${{ github.event.inputs.logLevel }}"
-#         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG    
+#         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG  
+##########################################################################
+#     - name: Create task definition with nginx
+#       id: task-def
+#       uses: aws-actions/amazon-ecs-render-task-definition@v1
+#       with:
+#         task-definition: ecs-task-definition.json
+#         container-name: magento_ecr_image_nginx
+# #         image: nginx
+# #         port: 80
+# #         network: sigma_magento-php_fpm:sigma_magento-php_fpm
+# #       env: 
+# #         PHP_FPM_HOST: sigma_magento-php_fpm
+# #         PHP_FPM_PORT: 9000
+#         image: nginx
+# #     - name: Retrieve trask def
+# #       uses: pagarme/ecs-task-def-replacements@main
+# #       id: task
+# #       with:
+# #         cluster-name: magento-ecs-cluster
+# #         service-name: magento-ecs_service
+# #         replacements: |
+# #           {
+# #             "containerDefinitions": [{
+# #               "image": "nginx"
+# #             }]
+# #           }  
