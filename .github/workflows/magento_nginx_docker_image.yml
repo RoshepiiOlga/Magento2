@@ -64,18 +64,21 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG    
         ::exit::
 
-#     - name: Scan image
-#       uses: anchore/scan-action@v3
-#       id: docker-image-scan
-#       with:
-#         #required: false
-#         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-#         fail-build: true        
-#     #    severity-cutoff: critical, high   
-#         severity: HIGH, CRITICAL, MEDIUM
+    - name: Scan image
+      uses: anchore/scan-action@v3
+      id: docker-image-scan
+      with:
+        #required: false
+        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        fail-build: true        
+    #    severity-cutoff: critical, high   
+        severity: HIGH, CRITICAL, MEDIUM
     
-     
-      
+    - name: Push images
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG    
+            
 #     - name: Automate and manual push nginx in the ecr
 # #       env:
 # #         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
