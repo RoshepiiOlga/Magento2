@@ -74,9 +74,7 @@ jobs:
           
     - name: delete_task_definition
       run: | 
-        aws ecs deregister-task-definition \
-        --region us-east-2 \
-        --task-definition "${arn}" > /dev/null
+        aws ecs deregister-task-definition --task-definition magento_ecs_task_github:1
     
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
