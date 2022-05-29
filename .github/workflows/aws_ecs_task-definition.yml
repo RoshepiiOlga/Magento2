@@ -54,7 +54,7 @@ jobs:
       with:
         task-definition: ecs-task-definition.json
         container-name: magento_ecr_image_nginx
-        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:nginx
         environment-variables: |
             PHP_FPM_HOST=sigma_magento-php_fpm
             PHP_FPM_PORT=9000
@@ -68,7 +68,7 @@ jobs:
         task-definition: ecs-task-definition.json
         #${{ steps.render-web-container.outputs.task-definition }}
         container-name: sigma_magento-php_fpm
-        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
+        image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:php
         run: |
           echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
 
