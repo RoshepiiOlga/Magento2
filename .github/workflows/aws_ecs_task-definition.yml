@@ -79,5 +79,5 @@ jobs:
         task-definition: ${{ steps.render-app-container.outputs.task-definition }}
         service: magento-ecs_service
         cluster: magento-ecs-cluster
-        wait-for-service-stability: true
+        wait-for-service-stability: false
         force-new-deployment: true
