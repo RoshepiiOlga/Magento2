@@ -47,14 +47,14 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
           
-    - name: Build Nginx image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      id: build-nginx_image        
-      run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .         
+#     - name: Build Nginx image
+#       env:
+#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#       id: build-nginx_image        
+#       run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .         
     
     - name: Automate and manual push nginx in the ecr
-      run: echo $env.WORKFLOW_DISPATCH_TAG
+      run: echo $env.WORKFLOW_DISPATCH_TAG.status
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
     #  if: ${{ env.WORKFLOW_DISPATCH_TAG == true }}
