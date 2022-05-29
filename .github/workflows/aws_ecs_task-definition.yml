@@ -54,16 +54,18 @@ jobs:
       with:
         task-definition: ecs-task-definition.json
         container-name: magento_ecr_image_nginx
-        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-#         environment-variables: |
-#             PHP_FPM_HOST=sigma_magento-php_fpm
-#             PHP_FPM_PORT=9000
+        image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:nginx
+        #"$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+        environment-variables: |
+            PHP_FPM_HOST=sigma_magento-php_fpm
+            PHP_FPM_PORT=9000
 
     - name: Modify Amazon ECS task definition with second container php
       id: render-app-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ${{ steps.render-web-container.outputs.task-definition }}
+        task-definition: ecs-task-definition.json
+        #${{ steps.render-web-container.outputs.task-definition }}
         container-name: sigma_magento-php_fpm
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
 
