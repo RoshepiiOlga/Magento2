@@ -14,10 +14,11 @@ on:
         - create a new image
       tags:
         description: 'Test scenario tags'
-        required: false 
+      #  required: false 
         type: boolean
         
 env:
+  WORKFLOW_DISPATCH_TAG: ${{ github.event.inputs.tags }}
   LEVEL: ${{ github.event.inputs.logLevel }}
   ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
   IMAGE_TAG: nginx
@@ -56,18 +57,21 @@ jobs:
       uses: anchore/scan-action@v3
       id: docker-image-scan
       with:
+        #required: false
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        fail-build: false
-        severity-cutoff: critical   
+        fail-build: true        
+    #    severity-cutoff: critical, high   
+        severity: HIGH, CRITICAL, MEDIUM
+    
+    - name: Automate and manual push nginx in the ecr
+      if: ${{  env.WORKFLOW_DISPATCH_TAG == true }}
+      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG  
       
     - name: Automate and manual push nginx in the ecr
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      if: ${{ ( github.docker-image-scan.action_status != 'critical') || ( github.docker-image-scan.action_status != 'high') || (github.event.inputs.tags == true) }}
+#       env:
+#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+     
+      if: ${{ ( github.docker-image-scan.action_status == steps.docker-image-scan.outputs.severity ) }} 
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG      
         
-    - name: Manual check for high vulnerability
-      if: ${{ (github.event.inputs.tags != true) && ( github.docker-image-scan.action_status == 'critical') || github.docker-image-scan.action_status == 'high'}}
-      run: |
-        echo "Image has high vulnerability"
          
