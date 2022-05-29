@@ -73,7 +73,7 @@ jobs:
           echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
     - name: Force deployment
       run: |
-        aws ecs update-service --cluster ff_prod --service ff_prod --force-new-deployment
+        aws ecs update-service --cluster magento-ecs-cluster --service magento-ecs_service --force-new-deployment
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
       with:
