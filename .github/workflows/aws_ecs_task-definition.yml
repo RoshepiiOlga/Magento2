@@ -71,7 +71,9 @@ jobs:
         image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:php
         run: |
           echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
-
+    - name: Force deployment
+      run: |
+        aws ecs update-service --cluster ff_prod --service ff_prod --force-new-deployment
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
       with:
@@ -79,5 +81,5 @@ jobs:
         task-definition: ${{ steps.render-app-container.outputs.task-definition }}
         service: magento-ecs_service
         cluster: magento-ecs-cluster
-        wait-for-service-stability: false
+        wait-for-service-stability: true
         force-new-deployment: true
