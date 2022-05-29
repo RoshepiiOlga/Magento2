@@ -65,6 +65,7 @@ jobs:
         cancel-in-progress: true
 
     - name: Scan image
+      if: ${{ github.event.inputs.tags == 'false' }}
       uses: anchore/scan-action@v3
       id: docker-image-scan
       with:
