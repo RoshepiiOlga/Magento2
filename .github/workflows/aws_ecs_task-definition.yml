@@ -53,7 +53,8 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ecs-task-definition.json
-        container-name: magento_ecr_image_nginx
+        container-name: nginx
+        #magento_ecr_image_nginx
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 #         environment-variables: |
 #             PHP_FPM_HOST=sigma_magento-php_fpm
@@ -64,7 +65,8 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ steps.render-web-container.outputs.task-definition }}
-        container-name: sigma_magento-php_fpm
+        container-name: php
+        #sigma_magento-php_fpm
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
 
     - name: Deploy Amazon ECS task definition
