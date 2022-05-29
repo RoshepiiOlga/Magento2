@@ -75,5 +75,6 @@ jobs:
         service: magento-ecs_service
         cluster: magento-ecs-cluster
         wait-for-service-stability: true
+        force-new-deployment: true
 #         codedeploy-application: my-codedeploy-application
 #         codedeploy-deployment-group: my-codedeploy-deployment-group
