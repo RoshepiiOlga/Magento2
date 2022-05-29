@@ -45,9 +45,6 @@ jobs:
         role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
         aws-region: ${{ env.AWS_REGION }}
         role-duration-seconds: 1200
-    - name: Download task definition
-      run: |
-        aws ecs describe-task-definition --task-definition  ecs-task-definition --query taskDefinition > ecs-task-definition.json
         
     - name: Render Amazon ECS task definition for first container nginx
       id: render-web-container
@@ -74,6 +71,12 @@ jobs:
         image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:php
         run: |
           echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
+          
+    - name: delete_task_definition
+      run: | 
+        aws ecs deregister-task-definition \
+        --region us-east-2 \
+        --task-definition "${arn}" > /dev/null
     
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
