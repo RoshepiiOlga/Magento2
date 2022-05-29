@@ -59,7 +59,7 @@ jobs:
             PHP_FPM_HOST=sigma_magento-php_fpm
             PHP_FPM_PORT=9000
         run: |
-          echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          echo $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
     - name: Modify Amazon ECS task definition with second container php
       id: render-app-container
@@ -70,7 +70,7 @@ jobs:
         container-name: sigma_magento-php_fpm
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
         run: |
-          echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
+          echo $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
