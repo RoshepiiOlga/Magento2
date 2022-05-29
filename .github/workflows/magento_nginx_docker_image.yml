@@ -62,7 +62,7 @@ jobs:
       if: ${{ github.event.inputs.tags == 'true' }}
       run: |
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG    
-        exit 1
+        exit 0
 
     - name: Scan image
       uses: anchore/scan-action@v3
