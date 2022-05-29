@@ -1,11 +1,24 @@
 name: Deploy to Amazon ECS
 
 on:
-  push:
-    branches: [ main ]
+#   push:
+#     branches: [ main ]
   pull_request:
     branches: [ main ]
-
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning' 
+        type: choice
+        options:
+        - create a new image
+      tags:
+        description: 'Test scenario tags'
+        required: false 
+        type: boolean
+        
 env:
   AWS_REGION: eu-west-1                   
   ECR_REPOSITORY: ${{ secrets.REPO_NAME }}           
