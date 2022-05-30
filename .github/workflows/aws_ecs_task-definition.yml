@@ -85,19 +85,31 @@ jobs:
         image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:php
         run: |
           echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
-          
 
-#     - name: Deploy
-#       run: |
-#         aws ecs update-service --cluster magento-ecs-cluster --service magento-ecs_service --force-new-deployment
-#       env:
-#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#         aws-region: ${{ env.AWS_REGION }}
     - name: Force deployment
       run: |
           aws ecs update-service --cluster magento-ecs-cluster --service magento-ecs_service --force-new-deployment
- 
+        
+    - name: Deploy Amazon ECS task definition
+      uses: donaldpiret/ecs-deploy@master
+      with:
+        cluster: magento-ecs-cluster
+        target: magento-ecs_service
+        task: magento_ecs_task_github
+      
+      
+#     - name: Deploy Amazon ECS task definition
+#       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
+#       with:
+#         #minimumHealthyPercent: 20%
+#         set_repo_policy: true
+#         task-definition: ${{ steps.render-web-container.outputs.task-definition }}
+#         service: magento-ecs_service
+#         cluster: magento-ecs-cluster
+#         wait-for-service-stability: true
+#         force-new-deployment: true
+
+
 #     - name: register_task_definition
 #       run: | 
 #         aws ecs update-service --cluster magento-ecs-cluster --service magento-ecs_service --task-definition  magento_ecs_task_github --desired-count 45
@@ -108,27 +120,10 @@ jobs:
 
 
 
-#         #minimumHealthyPercent: 20%
-#         set_repo_policy: true
-#         task-definition: ${{ steps.render-web-container.outputs.task-definition }}
-#         service: magento-ecs_service
-#         cluster: magento-ecs-cluster
-#         wait-for-service-stability: true
-#         force-new-deployment: true
-        
-    - name: Deploy Amazon ECS task definition
-      uses: donaldpiret/ecs-deploy@master
-      with:
-        cluster: magento-ecs-cluster
-        target: magento-ecs_service
-        task: magento_ecs_task_github
-        
-#       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
-#       with:
-#         #minimumHealthyPercent: 20%
-#         set_repo_policy: true
-#         task-definition: ${{ steps.render-web-container.outputs.task-definition }}
-#         service: magento-ecs_service
-#         cluster: magento-ecs-cluster
-#         wait-for-service-stability: true
-#         force-new-deployment: true
+#     - name: Deploy
+#       run: |
+#         aws ecs update-service --cluster magento-ecs-cluster --service magento-ecs_service --force-new-deployment
+#       env:
+#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         aws-region: ${{ env.AWS_REGION }}
