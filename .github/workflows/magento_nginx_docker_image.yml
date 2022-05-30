@@ -1,6 +1,6 @@
 on:
-  push:
-    branches: [ main ]
+#   push:
+#     branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -64,5 +64,5 @@ jobs:
         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
-      if:  $WORKFLOW_DISPATCH_TAG == 'true' 
+      if:  ${{ env.WORKFLOW_DISPATCH_TAG == 'true' }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG              
