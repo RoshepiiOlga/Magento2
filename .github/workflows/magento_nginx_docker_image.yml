@@ -1,6 +1,6 @@
 on:
-#   push:
-#     branches: [ main ]
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -14,15 +14,15 @@ on:
         - create a new image
       tags:
         description: 'Test scenario tags'
-      #  required: false 
+        required: false 
         type: boolean
         
 env:
   WORKFLOW_DISPATCH_TAG: ${{ github.event.inputs.tags }}
- # LEVEL: ${{ github.event.inputs.logLevel }}
   ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-  ECR_REGISTRY: ${{ github.login-ecr.outputs.registry }}
+  #ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
   IMAGE_TAG: nginx
+  ECR_REGISTRY_TEST: 908410081654.dkr.ecr.eu-west-1.amazonaws.com
  
 name: Node Project `nginx` CI/CD on ECR 
 
@@ -49,16 +49,15 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
           
     - name: Build Nginx image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#       env:
+#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       id: build-nginx_image        
       run: |
-        docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .  
+        docker build -f nginx/Dockerfile -t $ECR_REGISTRY_TEST/$ECR_REPOSITORY:$IMAGE_TAG .  
 
     - name: Scan nginx image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
- #     if: ${{ github.event.inputs.tags == 'false' }}
       uses: anchore/scan-action@v3
       id: docker-image-scan
       #continue-on-error: true     
