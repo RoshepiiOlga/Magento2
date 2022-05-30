@@ -58,7 +58,7 @@ jobs:
       uses: anchore/scan-action@v3          
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        required: false
+        required: true
         #WORKFLOW_DISPATCH_TAG: true
         fail-build: true   
         severity: HIGH, CRITICAL, MEDIUM
