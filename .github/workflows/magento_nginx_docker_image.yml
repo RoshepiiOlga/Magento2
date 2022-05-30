@@ -18,17 +18,20 @@ on:
         type: boolean
         
 env:
-  WORKFLOW_DISPATCH_TAG: ${{ github.event.inputs.tags }}
-  ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+  AWS_REGION:                     eu-west-1 
+  WORKFLOW_DISPATCH_TAG:          ${{ github.event.inputs.tags }}
+  ECR_REPOSITORY:                 magento_ecr_private_rep
+  IMAGE_TAG:                      nginx
+  ECR_REGISTRY:                   908410081654.dkr.ecr.eu-west-1.amazonaws.com
+  
   #ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-  IMAGE_TAG: nginx
-  ECR_REGISTRY_TEST: 908410081654.dkr.ecr.eu-west-1.amazonaws.com
- 
+  #ECR_REPOSITORY: ${{ secrets.REPO_NAME }} 
+  
 name: Node Project `nginx` CI/CD on ECR 
 
 jobs:
   deploy:
-    name: Deploy 
+    name: Deploy ubuntu
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -42,24 +45,17 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-1
+        aws-region: $AWS_REGION
 
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
           
-    - name: Build Nginx image
-#       env:
-#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      id: build-nginx_image        
-      run: |
-        docker build -f nginx/Dockerfile -t $ECR_REGISTRY_TEST/$ECR_REPOSITORY:$IMAGE_TAG .  
+    - name: Build Nginx image           
+      run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .  
 
     - name: Scan nginx image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       uses: anchore/scan-action@v3
-      id: docker-image-scan
       #continue-on-error: true     
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
@@ -68,7 +64,5 @@ jobs:
         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       if:  ${{ github.event.inputs.tags == 'true' }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG              
