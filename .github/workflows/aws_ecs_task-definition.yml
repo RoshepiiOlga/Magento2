@@ -85,17 +85,17 @@ jobs:
         run: |
           echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
           
-    - name: delete_task_definition
+    - name: register_task_definition
       run: | 
-        aws ecs register-task-definition \
-        --generate-cli-skeleton > ecs-task-definition.json
+        aws ecs deregister-task-definition --task-definition magento_ecs_task_github
+        aws ecs register-task-definition --generate-cli-skeleton > ecs-task-definition.json
         
         #aws ecs deregister-task-definition --task-definition magento_ecs_task_github:11
     
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
       with:
-        minimumHealthyPercent: 20%
+        #minimumHealthyPercent: 20%
         set_repo_policy: true
         task-definition: ${{ steps.render-app-container.outputs.task-definition }}
         service: magento-ecs_service
