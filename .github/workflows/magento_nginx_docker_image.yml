@@ -49,14 +49,16 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
           
     - name: Build Nginx image
-#       env:
-#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       id: build-nginx_image        
       run: |
         docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .  
         echo "${{ github.event.inputs.tags }}"
 
     - name: Scan nginx image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
  #     if: ${{ github.event.inputs.tags == 'false' }}
       uses: anchore/scan-action@v3
       id: docker-image-scan
@@ -67,7 +69,7 @@ jobs:
         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
-#       env:
-#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       if: ${{ github.event.inputs.tags == 'true' }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG              
