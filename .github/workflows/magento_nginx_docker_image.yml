@@ -54,16 +54,16 @@ jobs:
     - name: Build Nginx image           
       run: docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .  
 
-    - name: Scan nginx image
-      uses: anchore/scan-action@v3
-      #continue-on-error: true     
-      with:
-        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        #required: false
-        WORKFLOW_DISPATCH_TAG: true
-        fail-build: false   
-        severity: HIGH, CRITICAL, MEDIUM
+#     - name: Scan nginx image
+#       uses: anchore/scan-action@v3          
+#       with:
+#         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+#         #required: false
+#         WORKFLOW_DISPATCH_TAG: true
+#         fail-build: true   
+#         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
       if:  ${{ env.WORKFLOW_DISPATCH_TAG == 'true' }}
+      continue-on-error: true
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG              
