@@ -59,7 +59,8 @@ jobs:
       #continue-on-error: true     
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        WORKFLOW_DISPATCH_TAG: true
+        required: true
+      #  WORKFLOW_DISPATCH_TAG: true
         fail-build: true   
         severity: HIGH, CRITICAL, MEDIUM
     
