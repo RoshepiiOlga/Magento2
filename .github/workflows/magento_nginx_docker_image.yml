@@ -64,6 +64,6 @@ jobs:
 #         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
-      if:  ${{ env.WORKFLOW_DISPATCH_TAG == 'true' }}
+      if:   WORKFLOW_DISPATCH_TAG == 'true'
       continue-on-error: true
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG              
