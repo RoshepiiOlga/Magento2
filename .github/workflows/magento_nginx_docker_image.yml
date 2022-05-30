@@ -59,9 +59,9 @@ jobs:
       #continue-on-error: true     
       with:
         image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-        required: false
+        #required: false
         WORKFLOW_DISPATCH_TAG: false
-       # fail-build: true   
+        fail-build: true   
         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
