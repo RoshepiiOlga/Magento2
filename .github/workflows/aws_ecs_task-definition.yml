@@ -117,12 +117,18 @@ jobs:
 #         force-new-deployment: true
         
     - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
+      uses: donaldpiret/ecs-deploy@master
       with:
-        #minimumHealthyPercent: 20%
-        set_repo_policy: true
-        task-definition: ${{ steps.render-web-container.outputs.task-definition }}
-        service: magento-ecs_service
         cluster: magento-ecs-cluster
-        wait-for-service-stability: true
-        force-new-deployment: true
+        target: magento-ecs_service
+        task: magento_ecs_task_github
+        
+#       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
+#       with:
+#         #minimumHealthyPercent: 20%
+#         set_repo_policy: true
+#         task-definition: ${{ steps.render-web-container.outputs.task-definition }}
+#         service: magento-ecs_service
+#         cluster: magento-ecs-cluster
+#         wait-for-service-stability: true
+#         force-new-deployment: true
