@@ -19,7 +19,7 @@ on:
         
 env:
   WORKFLOW_DISPATCH_TAG: ${{ github.event.inputs.tags }}
-  LEVEL: ${{ github.event.inputs.logLevel }}
+ # LEVEL: ${{ github.event.inputs.logLevel }}
   ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
   ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
   IMAGE_TAG: nginx
@@ -28,7 +28,7 @@ name: Node Project `nginx` CI/CD on ECR
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy 
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -56,8 +56,8 @@ jobs:
         docker build -f nginx/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .  
         echo "${{ github.event.inputs.tags }}"
 
-    - name: Scan image
-      if: ${{ github.event.inputs.tags == 'false' }}
+    - name: Scan nginx image
+ #     if: ${{ github.event.inputs.tags == 'false' }}
       uses: anchore/scan-action@v3
       id: docker-image-scan
       with:
@@ -67,5 +67,7 @@ jobs:
         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       if: ${{ github.event.inputs.tags == 'true' }}
       run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG              
