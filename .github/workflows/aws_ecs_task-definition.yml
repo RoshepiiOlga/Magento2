@@ -85,20 +85,20 @@ jobs:
         run: |
           echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
           
-    - name: register_task_definition
-      run: | 
-        aws ecs update-service --cluster magento-ecs-cluster --service magento-ecs_service --task-definition  magento_ecs_task_github --desired-count 45
-       # aws ecs deregister-task-definition --task-definition magento_ecs_task_github
-       # aws ecs register-task-definition --generate-cli-skeleton > ecs-task-definition.json
+#     - name: register_task_definition
+#       run: | 
+#         aws ecs update-service --cluster magento-ecs-cluster --service magento-ecs_service --task-definition  magento_ecs_task_github --desired-count 45
+#        # aws ecs deregister-task-definition --task-definition magento_ecs_task_github
+#        # aws ecs register-task-definition --generate-cli-skeleton > ecs-task-definition.json
         
-        #aws ecs deregister-task-definition --task-definition magento_ecs_task_github:11
+#         #aws ecs deregister-task-definition --task-definition magento_ecs_task_github:11
     
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
       with:
         #minimumHealthyPercent: 20%
         set_repo_policy: true
-        task-definition: ${{ steps.render-app-container.outputs.task-definition }}
+        task-definition: ${{ steps.render-web-container.outputs.task-definition }}
         service: magento-ecs_service
         cluster: magento-ecs-cluster
         wait-for-service-stability: true
