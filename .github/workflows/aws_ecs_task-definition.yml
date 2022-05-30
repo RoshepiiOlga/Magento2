@@ -87,8 +87,9 @@ jobs:
           
     - name: register_task_definition
       run: | 
-        aws ecs deregister-task-definition --task-definition magento_ecs_task_github
-        aws ecs register-task-definition --generate-cli-skeleton > ecs-task-definition.json
+        aws ecs update-service --cluster magento-ecs-cluster --service magento-ecs_service --task-definition  magento_ecs_task_github --desired-count 45
+       # aws ecs deregister-task-definition --task-definition magento_ecs_task_github
+       # aws ecs register-task-definition --generate-cli-skeleton > ecs-task-definition.json
         
         #aws ecs deregister-task-definition --task-definition magento_ecs_task_github:11
     
