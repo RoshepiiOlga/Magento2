@@ -49,7 +49,7 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
           
-    - name: Build Nginx image           
+    - name: Build nginx image           
       run: |
         docker build -f nginx/Dockerfile -t $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX .  
         echo ${{github.event.inputs.tags}}
@@ -63,6 +63,6 @@ jobs:
         fail-build: true
         severity: HIGH, CRITICAL, MEDIUM
     
-    - name: Push image nginx to ECR
+    - name: Push nginx image to ECR
       if: ${{ env.WORKFLOW_DISPATCH_TAG == 'true' }}
       run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX              
