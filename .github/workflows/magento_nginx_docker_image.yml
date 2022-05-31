@@ -22,7 +22,7 @@ env:
   MAGENTO_ECR_REPOSITORY:                 magento_ecr_private_rep
   MAGENTO_ECR_REGISTRY:                   908410081654.dkr.ecr.eu-west-1.amazonaws.com
   MAGENTO_ECS_TD_IMAGE_TAG_NGINX:         nginx
-  WORKFLOW_DISPATCH_TAG:                  github.event.inputs.tags
+  WORKFLOW_DISPATCH_TAG:                  github.event.inputs.tags.status
   
 name: Node Project `nginx` CI/CD on ECR 
 
