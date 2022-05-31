@@ -53,18 +53,17 @@ jobs:
       run: |
         docker build -f nginx/Dockerfile -t $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX .  
         echo ${{github.event.inputs.tags}}
+        
     - name: Scan nginx image
-    #  if: ${{ github.event.inputs.tags == 'false' }}
+      if: ${{ github.event.inputs.tags == 'false' }}
       uses: anchore/scan-action@v3          
       with:
         image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX"
         required: false
         continue-on-error: false
-       # WORKFLOW_DISPATCH_TAG: true
         fail-build: true   
         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
       if: ${{ github.event.inputs.tags == true }}
-  #    continue-on-error: true
       run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX              
