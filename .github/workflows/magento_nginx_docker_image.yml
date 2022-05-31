@@ -25,7 +25,7 @@ env:
   WORKFLOW_DISPATCH_TAG:                  ${{ github.event.inputs.tags }}
 
   
-name: Node Project `nginx` CI/CD on ECR 
+name: Create a nginx image and push to ECR
 
 jobs:
   deploy:
@@ -63,6 +63,6 @@ jobs:
         fail-build: true
         severity: HIGH, CRITICAL, MEDIUM
     
-    - name: Push images nginx with scanning
+    - name: Push image nginx to ECR
       if: ${{ env.WORKFLOW_DISPATCH_TAG == 'true' }}
       run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX              
