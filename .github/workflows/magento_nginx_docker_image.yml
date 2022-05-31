@@ -59,8 +59,8 @@ jobs:
       uses: anchore/scan-action@v3          
       with:
         image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX"
-        required: false
-        continue-on-error: ${{ env.WORKFLOW_DISPATCH_TAG }}
+        required: ${{ env.WORKFLOW_DISPATCH_TAG }}
+        continue-on-error: true
         fail-build: true 
         #WORKFLOW_DISPATCH_TAG: true
         severity: HIGH, CRITICAL, MEDIUM
