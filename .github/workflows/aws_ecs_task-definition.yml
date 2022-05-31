@@ -28,9 +28,8 @@ env:
   MAGENTO_ECS_TD_JSON_FILE:               ecs-task-definition.json 
   MAGENTO_ECS_TD_CONTAINER_PHP:           sigma_magento-php_fpm
   MAGENTO_ECS_TD_CONTAINER_NGINX:         sigma_magento-php_fpm
-  MAGENTO_IMAGE_TAG_NGINX:                nginx
-  MAGENTO_IMAGE_TAG_PHP:                  php
-   # ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+  MAGENTO_ECS_TD_IMAGE_TAG_NGINX:         nginx
+  MAGENTO_ECS_TD_IMAGE_TAG_PHP:           php
    
 permissions:
   contents: read
@@ -64,22 +63,18 @@ jobs:
         role-duration-seconds: 1200
         
     - name: Render Amazon ECS task definition for first container nginx
-     # id: render-web-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.MAGENTO_ECS_TD_JSON_FILE }}
         container-name: ${{ env.MAGENTO_ECS_TD_CONTAINER_NGINX }}
-        image: $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_IMAGE_TAG_NGINX
-      #  image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:nginx 
+        image: $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_MAGENTO_ECS_TD_IMAGE_TAG_NGINX
     
     - name: Render Amazon ECS task definition for second container php
-     # id: render-app-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.MAGENTO_ECS_TD_JSON_FILE }}
         container-name: ${{ env.MAGENTO_ECS_TD_CONTAINER_PHP }}
-      #  image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:php
-        image: $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_IMAGE_TAG_PHP
+        image: $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_PHP
    
     - name: Deploy task definition in ECS service
       run: aws ecs update-service --cluster ${{ env.MAGENTO_ECS_CLUSTER }} --service ${{ env.MAGENTO_ECS_SERVICE }} --force-new-deployment
@@ -87,4 +82,3 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.MAGENTO_AWS_REGION }}
-
