@@ -52,7 +52,7 @@ jobs:
     - name: Render Amazon ECS task definition for first container nginx
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ${{ env.MAGENTO_ECS_TD_JSON_FILE }}
+        task-definition: ecs-task-definition.json 
         container-name: ${{ env.MAGENTO_ECS_TD_CONTAINER_NGINX }}
         image: $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_MAGENTO_ECS_TD_IMAGE_TAG_NGINX
     
