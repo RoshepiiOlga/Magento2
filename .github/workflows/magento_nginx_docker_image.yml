@@ -55,7 +55,7 @@ jobs:
         echo ${{github.event.inputs.tags}}
         
     - name: Scan nginx image
-     # if: ${{ env.WORKFLOW_DISPATCH_TAG == 'false' }}
+      if: ${{ env.WORKFLOW_DISPATCH_TAG == 'false' }}
       uses: anchore/scan-action@v3          
       with:
         image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX"
