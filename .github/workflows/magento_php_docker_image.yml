@@ -17,9 +17,11 @@ on:
         required: false 
         type: boolean
 env:
-  LEVEL: ${{ github.event.inputs.logLevel }}
-  ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
-  IMAGE_TAG_PHP: php
+  MAGENTO_AWS_REGION:                     eu-west-1  
+  MAGENTO_ECR_REPOSITORY:                 magento_ecr_private_rep 
+  MAGENTO_ECR_REGISTRY:                   908410081654.dkr.ecr.eu-west-1.amazonaws.com
+  MAGENTO_ECS_TD_IMAGE_TAG_PHP:           php
+  WORKFLOW_DISPATCH_TAG:                  github.event.inputs.tags
   
 name: Node Project `php` CI on ECR
 
@@ -39,36 +41,30 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-1
+        aws-region: ${{ env.MAGENTO_AWS_REGION }}
 
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
       
     - name: Build PHP image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      run: docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP .
+      run: docker build -t $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_PHP .
     
-    - name: Manual push php in the ecr without scan
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      if: ${{ github.event.inputs.tags == 'true' }}
-      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP
+#     - name: Manual push php in the ecr without scan
+#       if: ${{ github.event.inputs.tags == 'true' }}
+#       run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_PHP
         
     - name: Scan image php
-      if: ${{ github.event.inputs.tags == 'false' }}
+#      if: ${{ github.event.inputs.tags == 'false' }}
       uses: anchore/scan-action@v3
-      id: docker-image-scan_php
+#      id: docker-image-scan_php
       continue-on-error: true
       with:
-        image: "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
+        image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_PHP"
         fail-build: true
         severity-cutoff:  HIGH, CRITICAL, MEDIUM    
       
     - name: Push images php with scan
-      if: ${{ github.event.inputs.tags == 'false' }}
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      run: docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP 
+      if: ${{ github.event.inputs.tags == 'true' }}
+      run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_PHP 
          
