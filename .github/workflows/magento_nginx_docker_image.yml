@@ -60,9 +60,9 @@ jobs:
       uses: anchore/scan-action@v3          
       with:
         image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX"
-        required: true
-        continue-on-error: true
-        fail-build: ${{ env.WORKFLOW_DISPATCH_TAG }} 
+       # required: true
+        #continue-on-error: true
+        fail-build: false 
         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
