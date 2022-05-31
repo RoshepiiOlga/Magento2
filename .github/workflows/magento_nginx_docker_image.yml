@@ -55,13 +55,14 @@ jobs:
         echo ${{github.event.inputs.tags}}
         
     - name: Scan nginx image
-      if: ${{ github.event.inputs.tags == 'false' }}
+      #if: ${{ github.event.inputs.tags == 'false' }}
       uses: anchore/scan-action@v3          
       with:
         image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX"
         required: false
         continue-on-error: false
-        fail-build: true   
+        fail-build: true 
+        WORKFLOW_DISPATCH_TAG: true
         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
