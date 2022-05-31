@@ -65,5 +65,5 @@ jobs:
         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
-      if: ${{ github.event.inputs.tags == true }}
+      if: ${{ github.event.inputs.tags == 'true' }}
       run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX              
