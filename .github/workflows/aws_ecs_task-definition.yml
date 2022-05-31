@@ -82,7 +82,7 @@ jobs:
         image: $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_IMAGE_TAG_PHP
    
     - name: Deploy task definition in ECS service
-      run: aws ecs update-service --cluster $MAGENTO_ECS_CLUSTER --service MAGENTO_ECS_SERVICE --force-new-deployment
+      run: aws ecs update-service --cluster ${{ env.MAGENTO_ECS_CLUSTER }} --service ${{ env.MAGENTO_ECS_SERVICE }} --force-new-deployment
       env:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
