@@ -14,7 +14,7 @@ env:
   MAGENTO_ECS_CLUSTER:                    magento-ecs-cluster                
   MAGENTO_ECS_TD_JSON_FILE:               ecs-task-definition.json 
   MAGENTO_ECS_TD_CONTAINER_PHP:           sigma_magento-php_fpm
-  MAGENTO_ECS_TD_CONTAINER_NGINX:         sigma_magento-nginx
+  MAGENTO_ECS_TD_CONTAINER_NGINX:         magento_ecr_image_nginx
   MAGENTO_ECS_TD_IMAGE_TAG_NGINX:         nginx
   MAGENTO_ECS_TD_IMAGE_TAG_PHP:           php
    
@@ -52,7 +52,7 @@ jobs:
     - name: Render Amazon ECS task definition for first container nginx
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ecs-task-definition.json 
+        task-definition: ${{ env.MAGENTO_ECS_TD_JSON_FILE }}
         container-name: ${{ env.MAGENTO_ECS_TD_CONTAINER_NGINX }}
         image: $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_MAGENTO_ECS_TD_IMAGE_TAG_NGINX
     
