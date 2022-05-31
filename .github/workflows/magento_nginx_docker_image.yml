@@ -62,7 +62,7 @@ jobs:
         image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX"
        # required: true
         #continue-on-error: true
-        fail-build: false 
+        fail-build: ${{ env.WORKFLOW_DISPATCH_TAG }} 
         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
