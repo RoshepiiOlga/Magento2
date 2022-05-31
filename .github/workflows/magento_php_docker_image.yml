@@ -23,11 +23,11 @@ env:
   MAGENTO_ECS_TD_IMAGE_TAG_PHP:           php
   WORKFLOW_DISPATCH_TAG:                  ${{ github.event.inputs.tags }}
   
-name: Node Project `php` CI on ECR
+name: Create a php image and push to ECR
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy ubuntu
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -47,10 +47,10 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
       
-    - name: Build PHP image to Amazon ECR
+    - name: Build php image
       run: docker build -t $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_PHP .
         
-    - name: Scan image php
+    - name: Scan php image 
       if: ${{ env.WORKFLOW_DISPATCH_TAG == 'false' }}
       uses: anchore/scan-action@v3
       continue-on-error: true
@@ -59,7 +59,7 @@ jobs:
         fail-build: true
         severity-cutoff:  HIGH, CRITICAL, MEDIUM    
       
-    - name: Push images php with scan
+    - name: Push php image to ECR 
       if: ${{ env.WORKFLOW_DISPATCH_TAG == 'true' }}
       run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_PHP 
          
