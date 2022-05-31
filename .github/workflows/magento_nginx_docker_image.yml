@@ -14,17 +14,17 @@ on:
         - create a new image
       tags:
         description: 'Test scenario tags'
-       # required: false 
+        required: false 
         type: boolean
-        #default: false
+
         
 env:
   MAGENTO_AWS_REGION:                     eu-west-1 
   MAGENTO_ECR_REPOSITORY:                 magento_ecr_private_rep
   MAGENTO_ECR_REGISTRY:                   908410081654.dkr.ecr.eu-west-1.amazonaws.com
   MAGENTO_ECS_TD_IMAGE_TAG_NGINX:         nginx
-  #WORKFLOW_DISPATCH_TAG:                  github.event.inputs.tags
-  WORKFLOW_DISPATCH_TAG:                  false
+  WORKFLOW_DISPATCH_TAG:                  github.event.inputs.tags
+
   
 name: Node Project `nginx` CI/CD on ECR 
 
