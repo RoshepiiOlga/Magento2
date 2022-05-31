@@ -1,23 +1,8 @@
 name: Deploy to Amazon ECS
 
 on:
-#   push:
-#     branches: [ main ]
-  pull_request:
+  push:
     branches: [ main ]
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'     
-        required: true
-        default: 'warning' 
-        type: choice
-        options:
-        - create a new image
-      tags:
-        description: 'Test scenario tags'
-        required: false 
-        type: boolean
         
 env:
   MAGENTO_AWS_REGION:                     eu-west-1                      
@@ -27,7 +12,7 @@ env:
   MAGENTO_ECS_CLUSTER:                    magento-ecs-cluster                
   MAGENTO_ECS_TD_JSON_FILE:               ecs-task-definition.json 
   MAGENTO_ECS_TD_CONTAINER_PHP:           sigma_magento-php_fpm
-  MAGENTO_ECS_TD_CONTAINER_NGINX:         sigma_magento-php_fpm
+  MAGENTO_ECS_TD_CONTAINER_NGINX:         sigma_magento-nginx
   MAGENTO_ECS_TD_IMAGE_TAG_NGINX:         nginx
   MAGENTO_ECS_TD_IMAGE_TAG_PHP:           php
    
