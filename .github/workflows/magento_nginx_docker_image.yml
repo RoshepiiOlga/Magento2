@@ -56,11 +56,11 @@ jobs:
       with:
         image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$ MAGENTO_ECS_TD_IMAGE_TAG_NGINX"
         required: true
-        #WORKFLOW_DISPATCH_TAG: true
+        WORKFLOW_DISPATCH_TAG: true
         fail-build: true   
         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
-      if: ${{ github.event.inputs.tags == 'true' }}
+      if: ${{ env.WORKFLOW_DISPATCH_TAG }} == 'true' 
       continue-on-error: true
       run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$ MAGENTO_ECS_TD_IMAGE_TAG_NGINX              
