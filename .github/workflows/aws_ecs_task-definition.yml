@@ -3,6 +3,8 @@ name: Deploy to Amazon ECS
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
         
 env:
   MAGENTO_AWS_REGION:                     eu-west-1                      
