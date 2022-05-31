@@ -1,39 +1,27 @@
 name: Deploy to Amazon ECS
 
 on:
-#   push:
-#     branches: [ main ]
-  pull_request:
+  push:
     branches: [ main ]
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'     
-        required: true
-        default: 'warning' 
-        type: choice
-        options:
-        - create a new image
-      tags:
-        description: 'Test scenario tags'
-        required: false 
-        type: boolean
         
 env:
-  AWS_REGION: eu-west-1                   
-  ECR_REPOSITORY: ${{ secrets.REPO_NAME }}           
-  ECS_SERVICE: magento-ecs_service                
-  ECS_CLUSTER: magento-ecs-cluster                
-  ECS_TASK_DEFINITION:  magento_ecs_task_github_task                                         
-  CONTAINER_NAME: nginx
-  IMAGE_TAG: nginx
-  
+  MAGENTO_AWS_REGION:                     eu-west-1                      
+  MAGENTO_ECR_REPOSITORY:                 magento_ecr_private_rep
+  MAGENTO_ECR_REGISTRY:                   908410081654.dkr.ecr.eu-west-1.amazonaws.com
+  MAGENTO_ECS_SERVICE:                    magento-ecs_service                
+  MAGENTO_ECS_CLUSTER:                    magento-ecs-cluster                
+  MAGENTO_ECS_TD_JSON_FILE:               ecs-task-definition.json 
+  MAGENTO_ECS_TD_CONTAINER_PHP:           sigma_magento-php_fpm
+  MAGENTO_ECS_TD_CONTAINER_NGINX:         sigma_magento-nginx
+  MAGENTO_ECS_TD_IMAGE_TAG_NGINX:         nginx
+  MAGENTO_ECS_TD_IMAGE_TAG_PHP:           php
+   
 permissions:
   contents: read
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy ubuntu
     runs-on: ubuntu-latest
     environment: production
 
@@ -46,7 +34,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+        aws-region: ${{ env.MAGENTO_AWS_REGION }}
         
     - name: Login to Amazon ECR
       id: login-ecr
@@ -56,45 +44,26 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v1
       with:
         role-to-assume: ${{ secrets.AWS_IAM_ROLE }}
-        aws-region: ${{ env.AWS_REGION }}
+        aws-region: ${{ env.MAGENTO_AWS_REGION }}
         role-duration-seconds: 1200
         
     - name: Render Amazon ECS task definition for first container nginx
-      id: render-web-container
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: ecs-task-definition.json
-        container-name: magento_ecr_image_nginx
-        image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:nginx
-        environment-variables: |
-            PHP_FPM_HOST=sigma_magento-php_fpm
-            PHP_FPM_PORT=9000
-        run: |
-          echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
-    - name: Modify Amazon ECS task definition with second container php
-      id: render-app-container
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: ecs-task-definition.json
-        #${{ steps.render-web-container.outputs.task-definition }}
-        container-name: sigma_magento-php_fpm
-        image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:php
-        run: |
-          echo "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_PHP"
-          
-    - name: delete_task_definition
-      run: | 
-        aws ecs deregister-task-definition --task-definition magento_ecs_task_github:11
+        task-definition: ${{ env.MAGENTO_ECS_TD_JSON_FILE }}
+        container-name: ${{ env.MAGENTO_ECS_TD_CONTAINER_NGINX }}
+        image: $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_MAGENTO_ECS_TD_IMAGE_TAG_NGINX
     
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1 
+    - name: Render Amazon ECS task definition for second container php
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        set_repo_policy: true
-        task-definition: ${{ steps.render-app-container.outputs.task-definition }}
-        service: magento-ecs_service
-        cluster: magento-ecs-cluster
-        wait-for-service-stability: true
-        force-new-deployment: true
+        task-definition: ${{ env.MAGENTO_ECS_TD_JSON_FILE }}
+        container-name: ${{ env.MAGENTO_ECS_TD_CONTAINER_PHP }}
+        image: $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_PHP
+   
+    - name: Deploy task definition in ECS service
+      run: aws ecs update-service --cluster ${{ env.MAGENTO_ECS_CLUSTER }} --service ${{ env.MAGENTO_ECS_SERVICE }} --force-new-deployment
+      env:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.MAGENTO_AWS_REGION }}
