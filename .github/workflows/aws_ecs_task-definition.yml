@@ -67,7 +67,7 @@ jobs:
      # id: render-web-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: $MAGENTO_ECS_TD_JSON_FILE
+        task-definition: ${{ env.MAGENTO_ECS_TD_JSON_FILE }}
         container-name: $MAGENTO_ECS_TD_CONTAINER_NGINX
         image: $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_IMAGE_TAG_NGINX
       #  image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:nginx 
