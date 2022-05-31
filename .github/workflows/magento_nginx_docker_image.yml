@@ -1,6 +1,6 @@
 on:
-#   push:
-#     branches: [ main ]
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -22,8 +22,7 @@ env:
   MAGENTO_ECR_REPOSITORY:                 magento_ecr_private_rep
   MAGENTO_ECR_REGISTRY:                   908410081654.dkr.ecr.eu-west-1.amazonaws.com
   MAGENTO_ECS_TD_IMAGE_TAG_NGINX:         nginx
-  WORKFLOW_DISPATCH_TAG:                  'true'
-  #WORKFLOW_DISPATCH_TAG:                  ${{ github.event.inputs.tags }}
+  WORKFLOW_DISPATCH_TAG:                  ${{ github.event.inputs.tags }}
 
   
 name: Node Project `nginx` CI/CD on ECR 
@@ -56,14 +55,14 @@ jobs:
         echo ${{github.event.inputs.tags}}
         
     - name: Scan nginx image
-     # if: ${{ env.WORKFLOW_DISPATCH_TAG == 'false' }}
-      uses: anchore/scan-action@v3          
+      if: ${{ env.WORKFLOW_DISPATCH_TAG == 'false' }}
+      uses: anchore/scan-action@v3
+      continue-on-error: true
       with:
-        image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX"
-        continue-on-error: false
+        image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX"        
         fail-build: true
         severity: HIGH, CRITICAL, MEDIUM
     
     - name: Push images nginx with scanning
-      if: ${{ github.event.inputs.tags == 'true' }}
+      if: ${{ env.WORKFLOW_DISPATCH_TAG == 'true' }}
       run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX              
