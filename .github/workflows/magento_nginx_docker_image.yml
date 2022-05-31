@@ -49,8 +49,9 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
           
     - name: Build Nginx image           
-      run: docker build -f nginx/Dockerfile -t $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX .  
-
+      run: |
+        docker build -f nginx/Dockerfile -t $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_NGINX .  
+        echo ${{ env.WORKFLOW_DISPATCH_TAG }}
     - name: Scan nginx image
       uses: anchore/scan-action@v3          
       with:
