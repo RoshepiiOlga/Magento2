@@ -1,6 +1,6 @@
 on:
-#   push:
-#     branches: [ main ]
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -21,7 +21,7 @@ env:
   MAGENTO_ECR_REPOSITORY:                 magento_ecr_private_rep 
   MAGENTO_ECR_REGISTRY:                   908410081654.dkr.ecr.eu-west-1.amazonaws.com
   MAGENTO_ECS_TD_IMAGE_TAG_PHP:           php
-  WORKFLOW_DISPATCH_TAG:                  github.event.inputs.tags
+  WORKFLOW_DISPATCH_TAG:                  ${{ github.event.inputs.tags }}
   
 name: Node Project `php` CI on ECR
 
@@ -49,15 +49,10 @@ jobs:
       
     - name: Build PHP image to Amazon ECR
       run: docker build -t $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_PHP .
-    
-#     - name: Manual push php in the ecr without scan
-#       if: ${{ github.event.inputs.tags == 'true' }}
-#       run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_PHP
         
     - name: Scan image php
-#      if: ${{ github.event.inputs.tags == 'false' }}
+      if: ${{ env.WORKFLOW_DISPATCH_TAG == 'false' }}
       uses: anchore/scan-action@v3
-#      id: docker-image-scan_php
       continue-on-error: true
       with:
         image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_PHP"
@@ -65,6 +60,6 @@ jobs:
         severity-cutoff:  HIGH, CRITICAL, MEDIUM    
       
     - name: Push images php with scan
-      if: ${{ github.event.inputs.tags == 'true' }}
+      if: ${{ env.WORKFLOW_DISPATCH_TAG == 'true' }}
       run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_ECS_TD_IMAGE_TAG_PHP 
          
