@@ -19,13 +19,10 @@ on:
         
 env:
   MAGENTO_AWS_REGION:                     eu-west-1 
-  WORKFLOW_DISPATCH_TAG:                  github.event.inputs.tags
   MAGENTO_ECR_REPOSITORY:                 magento_ecr_private_rep
-  MAGENTO_IMAGE_TAG_NGINX:                nginx
   MAGENTO_ECR_REGISTRY:                   908410081654.dkr.ecr.eu-west-1.amazonaws.com
-  
-  #ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-  #ECR_REPOSITORY: ${{ secrets.REPO_NAME }} 
+  MAGENTO_ECS_TD_IMAGE_TAG_NGINX:         nginx
+  WORKFLOW_DISPATCH_TAG:                  github.event.inputs.tags
   
 name: Node Project `nginx` CI/CD on ECR 
 
@@ -52,12 +49,12 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
           
     - name: Build Nginx image           
-      run: docker build -f nginx/Dockerfile -t $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_IMAGE_TAG_NGINX .  
+      run: docker build -f nginx/Dockerfile -t $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$ MAGENTO_ECS_TD_IMAGE_TAG_NGINX .  
 
     - name: Scan nginx image
       uses: anchore/scan-action@v3          
       with:
-        image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_IMAGE_TAG_NGINX"
+        image: "$MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$ MAGENTO_ECS_TD_IMAGE_TAG_NGINX"
         required: true
         #WORKFLOW_DISPATCH_TAG: true
         fail-build: true   
@@ -66,4 +63,4 @@ jobs:
     - name: Push images nginx with scanning
       if: ${{ github.event.inputs.tags == 'true' }}
       continue-on-error: true
-      run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$MAGENTO_IMAGE_TAG_NGINX              
+      run: docker push $MAGENTO_ECR_REGISTRY/$MAGENTO_ECR_REPOSITORY:$ MAGENTO_ECS_TD_IMAGE_TAG_NGINX              
