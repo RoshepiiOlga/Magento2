@@ -7,7 +7,7 @@ on:
         description: 'AWS ACCOUNT'
         required: true
         type: text
-        default: 537700424781
+        default: 908410081654
       AWS_REGION:
         description: 'AWS REGION'
         required: true
@@ -31,7 +31,7 @@ on:
         description: 'Fail build on scan findings?'
         required: true
         type: boolean
-        default: false
+        default: true
 
 env:
   DOCKER_IMAGE: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG }}
