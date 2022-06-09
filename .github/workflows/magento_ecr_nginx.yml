@@ -35,7 +35,7 @@ on:
 
 env:
   DOCKER_IMAGE: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG }}
-  DOCKER_FILE: infrastructure/docker/${{ github.event.inputs.ECR_REPO }}.Dockerfile
+  DOCKER_FILE: dockerfiles/${{ github.event.inputs.ECR_REPO }}.Dockerfile
   
 jobs:
   deploy:
