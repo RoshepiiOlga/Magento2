@@ -13,5 +13,3 @@ RUN install-php-extensions bcmath intl pdo_mysql soap sockets  xsl zip
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer 
 
 COPY ./etc/php.ini "$PHP_INI_DIR/php.ini"
-
-COPY magento2 /var/www/html
