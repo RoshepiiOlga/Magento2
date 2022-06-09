@@ -12,7 +12,7 @@ on:
         description: 'AWS REGION'
         required: true
         type: text
-        default: eu-central-1
+        default: eu-west-1
       ECR_REPO:
         description: 'ECR REPOSITORY'
         required: true
