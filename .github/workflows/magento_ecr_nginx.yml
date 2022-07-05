@@ -14,10 +14,16 @@ on:
         type: text
         default: eu-west-1
       ECR_REPO:
-        description: 'ECR REPOSITORY'
+       description: 'ECR REPOSITORY'
+       required: true
+       type: choice
+       options:
+          - magento-magento-app-sb-0001
+          - magento-magento-data-sb-0001
+      CONTAINER_NAME:
+        description: 'CONTAINER NAME'
         required: true
         type: choice
-        #default: nginx
         options:
           - nginx
           - php
