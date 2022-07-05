@@ -57,7 +57,7 @@
         }
       ],
       "stopTimeout": null,
-      "image": "908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:nginx",
+      "image": "908410081654.dkr.ecr.eu-west-1.amazonaws.com/common:nginx",
       "startTimeout": null,
       "firelensConfiguration": null,
       "dependsOn": null,
@@ -76,7 +76,8 @@
       "dockerLabels": null,
       "systemControls": null,
       "privileged": null,
-      "name": "magento_ecr_image_nginx"
+      "name": "nginx"
+      #"name": "magento_ecr_image_nginx"
     },
     {
       "dnsSearchDomains": null,
@@ -113,7 +114,8 @@
       "memoryReservation": null,
       "volumesFrom": [],
       "stopTimeout": null,
-      "image": "908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:php",
+      "image": "908410081654.dkr.ecr.eu-west-1.amazonaws.com/common:php",
+     # "image": "908410081654.dkr.ecr.eu-west-1.amazonaws.com/magento_ecr_private_rep:php",
       "startTimeout": null,
       "firelensConfiguration": null,
       "dependsOn": null,
