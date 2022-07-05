@@ -21,22 +21,28 @@ on:
        options:
           - common
           - aplication
-     CONTAINER_NAME_NGINX:
-       description: 'CONTAINER NAME NGINX'
-       required: true
-       type: text
-       default:  latest
-     IMAGE_TAG_NGINX:
+     CONTAINER_NAME_FIRST:
+        description: 'CONTAINER NAME'
+        required: true
+        type: choice
+        options:
+          - nginx
+          - php
+          - php_magento
+     IMAGE_TAG_FIRST:
       description: 'IMAGE TAG NGINX'
       required: true
       type: text
       default: latest
-     CONTAINER_NAME_PHP:
-       description: 'CONTAINER NAME PHP'
+     CONTAINER_NAME_SECOND:
+       description: 'CONTAINER NAME'
        required: true
-       type: text
-       default:  latest
-     IMAGE_TAG_PHP:
+       type: choice
+       options:
+          - nginx
+          - php
+          - php_magento
+     IMAGE_TAG_SECOND:
       description: 'IMAGE TAG PHP'
       required: true
       type: text
@@ -87,15 +93,15 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
-        container-name: ${{ github.event.inputs.CONTAINER_NAME_NGINX }}
-        image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_NGINX }}
-         echo `${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_NGINX }}`
+        container-name: ${{ github.event.inputs.CONTAINER_NAME_FIRST }}
+        image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_FIRST }}
+   
     - name: Render Amazon ECS task definition for second container php
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
-        container-name: ${{ github.event.inputs.CONTAINER_NAME_PHP }}
-        image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_PHP }}
+        container-name: ${{ github.event.inputs.CONTAINER_NAME_SECOND }}
+        image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_SECOND }}
         
     - name: Deploy task definition in ECS service
       env:
