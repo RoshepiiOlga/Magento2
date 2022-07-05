@@ -17,11 +17,11 @@ on:
      ECR_REPO:
        description: 'ECR repository'
        required: true
-       type: text
-#        options:
-#           - common
-#           - aplication
-       default: magento_ecr_private_rep
+       type: choice
+       options:
+          - common
+          - aplication
+  #     default: magento_ecr_private_rep
 #      CONTAINER_NAME_NGINX:
 #         description: 'Container name first images'
 #         required: true
