@@ -8,7 +8,7 @@ on:
        description: 'AWS ACCOUNT'
        required: true
        type: text
-       default: 537700424781
+       default: 908410081654
      AWS_REGION:
        description: 'AWS REGION'
        required: true
