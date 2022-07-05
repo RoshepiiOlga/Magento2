@@ -32,7 +32,7 @@ on:
         description: 'IMAGE TAG'
         required: true
         type: text
-        default: ${{ github.event.inputs.CONTAINER_NAME }}
+        default: latest
       fail_scan:
         description: 'Fail build on scan findings?'
         required: true
