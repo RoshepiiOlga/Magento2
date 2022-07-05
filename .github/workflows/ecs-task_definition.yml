@@ -1,4 +1,5 @@
-name: Build and push APP to Amazon ECS
+
+name: Deploy to Amazon ECS
 
 on:
  workflow_dispatch:
@@ -7,7 +8,7 @@ on:
        description: 'AWS ACCOUNT'
        required: true
        type: text
-       default: 908410081654
+       default: 537700424781
      AWS_REGION:
        description: 'AWS REGION'
        required: true
@@ -16,50 +17,55 @@ on:
      ECR_REPO:
        description: 'ECR REPOSITORY'
        required: true
-       type: choice
-      # default: magento3 
-       options:
-          - nginx
-          - php
-          - php_magento
-    #  NAME_TASK_TO_STOP:
-    #    description: 'NAME TASK TO STOP'  #${{ github.event.inputs.NAME_TASK_TO_STOP }}
-    #    required: true
-    #    type: text
-    #    default:  input_name_here
-     CONTAINER_NAME_WITH_APP:
-       description: 'CONTAINER NAME WITH APP'
+       type: text
+       default: nginx
+     IMAGE_TAG_NGINX:
+       description: 'IMAGE TAG NGINX'
        required: true
        type: text
-       default:  sigma_magento-php_fpm
+       default: nginx_1   
+     IMAGE_TAG_PHP:
+       description: 'IMAGE TAG PHP'
+       required: true
+       type: text
+       default:  php-magento2
+     CONTAINER_NAME_PHP:
+       description: 'CONTAINER NAME PHP'
+       required: true
+       type: text
+       default:  latest
+     CONTAINER_NAME_NGINX:
+       description: 'CONTAINER NAME NGINX'
+       required: true
+       type: text
+       default:  latest
      ECS_SERVICE_NAME:
        description: 'ECS SERVICE'
        required: true
        type: text
-       default:  magento-service-CI
+       default:  test2
      ECS_CLUSTER_NAME:
        description: 'ECS CLUSTER'
        required: true
        type: text
-       default:  magento-cluster-CI
-     fail_scan:
-       description: 'Fail build on scan findings?'
-       required: true
-       type: boolean
-       default: true
-
+       default:  ecs-prod-0001
+#      TASK_VERSION:
+#        description: 'TASK VERSION'
+#        required: true
+#        type: text
+#        default:  latest
      
 env:
-  ECS_TD_JSON_FILE: ecs-task-definition.json
-  DOCKER_IMAGE:     ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG }}
+  ECS_TD_JSON_FILE:             ecs-task-definition.json                                      
    
 permissions:
   contents: read
 
 jobs:
   deploy:
-    name: Build and Deploy
+    name: Deploy ubuntu
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
     - name: Git clone repo
@@ -75,50 +81,27 @@ jobs:
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
     
-    - name: 'Build ${{ github.event.inputs.ECR_REPO }} image'
-      run: 
-        docker build -f Magento2/dockerfiles -t ${{env.DOCKER_IMAGE}} . 
+
         
-    - name: 'Scan ${{ github.event.inputs.ECR_REPO }} image'
-      id: scan
-      uses: anchore/scan-action@v3.2.5
-      with:
-        image:  '${{ env.DOCKER_IMAGE }}'
-        fail-build: '${{ github.event.inputs.fail_scan }}'
-        severity-cutoff:  High
-        acs-report-enable: true
-        
-    - name: 'push ${{ github.event.inputs.ECR_REPO }} image'
-      run: 
-        docker push ${{ env.DOCKER_IMAGE }}
-       
-    - name: Render Amazon ECS task definition for second container with app
-      id: render
+    - name: Render Amazon ECS task definition for first container nginx
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.ECS_TD_JSON_FILE }}
-        container-name: ${{ github.event.inputs.CONTAINER_NAME_WITH_APP }}
-        image: '${{ env.DOCKER_IMAGE }}'
-   
-   # Use this check if you don't have portmapping configured.
-   # https://docs.aws.amazon.com/cli/latest/reference/ecs/stop-task.html
-    - name: Stop the previous task (in order to start a new one)
+        container-name: ${{ github.event.inputs.CONTAINER_NAME_NGINX }}
+        image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_NGINX }}
+    
+    - name: Render Amazon ECS task definition for second container php
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ env.ECS_TD_JSON_FILE }}
+        container-name: ${{ github.event.inputs.CONTAINER_NAME_PHP }}
+        image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_PHP }}
+        
+    - name: Deploy task definition in ECS service
       env:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ github.event.inputs.AWS_REGION }}
-      run: 
-       aws ecs stop-task --cluster magento-cluster-CI --task ${{ github.event.inputs.NAME_TASK_TO_STOP }}
-   
-   
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.render.outputs.task-definition }}
-        service: ${{ github.event.inputs.ECS_SERVICE_NAME }}
-        cluster: ${{ github.event.inputs.ECS_CLUSTER_NAME }}
-        wait-for-service-stability: false
-  
-#        Manual update aws ecs service 
-#        https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html
-#        aws ecs update-service --cluster ${{ github.event.inputs.ECS_CLUSTER_NAME }} --service ${{ github.event.inputs.ECS_SERVICE_NAME }} --force-new-deployment
+      run: |
+       aws ecs stop-task --cluster magento-cluster-CI --task 124ba7b6dc814e85b9930d3b1e579dae
+       aws ecs update-service --cluster ${{ github.event.inputs.ECS_CLUSTER_NAME }} --service ${{ github.event.inputs.ECS_SERVICE_NAME }} --task-definition CccomboEXIT:9   --force-new-deployment
