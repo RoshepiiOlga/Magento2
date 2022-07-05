@@ -12,17 +12,21 @@ on:
        description: 'AWS REGION'
        required: true
        type: text
-       default: eu-central-1
+       default: eu-west-1
      ECR_REPO:
        description: 'ECR REPOSITORY'
        required: true
-       type: text
-       default: magento3 
-     NAME_TASK_TO_STOP:
-       description: 'NAME TASK TO STOP'  #${{ github.event.inputs.NAME_TASK_TO_STOP }}
-       required: true
-       type: text
-       default:  input_name_here
+       type: choice
+      # default: magento3 
+       options:
+          - nginx
+          - php
+          - php_magento
+    #  NAME_TASK_TO_STOP:
+    #    description: 'NAME TASK TO STOP'  #${{ github.event.inputs.NAME_TASK_TO_STOP }}
+    #    required: true
+    #    type: text
+    #    default:  input_name_here
      CONTAINER_NAME_WITH_APP:
        description: 'CONTAINER NAME WITH APP'
        required: true
@@ -46,19 +50,8 @@ on:
 
      
 env:
-  ECS_TD_JSON_FILE:             AWS_ECS_task-definition.json
-  DOCKER_IMAGE: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.sha }}
- # TASK_VERSION:                   latest                                           ${{ github.event.inputs.TASK_VERSION }}
-#   AWS_REGION:                    eu-central-1                                     ${{ github.event.inputs.AWS_REGION }}
-#   ECR_REPOSITORY:                magento3                                         ${{ github.event.inputs.ECR_REPO }}
-#   AWS_ACCOUNT:                   908410081654                                     ${{ github.event.inputs.AWS_ACCOUNT }}
-#   ECR_REGISTRY:                  908410081654.dkr.ecr.eu-central-1.amazonaws.com    -\\-
-#    ECS_SERVICE:                  magento-service-CI                               ${{ github.event.inputs.ECS_SERVICE_NAME }}
-#    ECS_CLUSTER:                  magento-cluster-CI                               ${{ github.event.inputs.ECS_CLUSTER_NAME }}
-#    ECS_TD_CONTAINER_PHP:         sigma_magento-php_fpm                            ${{ github.event.inputs.CONTAINER_NAME_PHP }}
-#    ECS_TD_CONTAINER_NGINX:       sigma_magento-nginx                              ${{ github.event.inputs.CONTAINER_NAME_NGINX }}
-#   ECS_TD_IMAGE_TAG_PHP:          php-magento2                                     ${{ github.event.inputs.IMAGE_TAG_PHP }}
-#   ECS_TD_IMAGE_TAG_NGINX:        nginx_123                                        ${{ github.event.inputs.IMAGE_TAG_NGINX }}
+  ECS_TD_JSON_FILE: ecs-task-definition.json
+  DOCKER_IMAGE:     ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG }}
    
 permissions:
   contents: read
@@ -81,12 +74,10 @@ jobs:
         
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
-      
-      #-------------------------------------------------------------------------------------------------------
     
     - name: 'Build ${{ github.event.inputs.ECR_REPO }} image'
       run: 
-        docker build -f build_magento_image/Dockerfile -t ${{env.DOCKER_IMAGE}} . 
+        docker build -f ${{ env.DOCKER_FILE }} -t ${{env.DOCKER_IMAGE}} . 
         
     - name: 'Scan ${{ github.event.inputs.ECR_REPO }} image'
       id: scan
@@ -100,11 +91,6 @@ jobs:
     - name: 'push ${{ github.event.inputs.ECR_REPO }} image'
       run: 
         docker push ${{ env.DOCKER_IMAGE }}
-      
-
-
-        
-        #--------------------------------------------------------------------------------
        
     - name: Render Amazon ECS task definition for second container with app
       id: render
@@ -132,7 +118,6 @@ jobs:
         service: ${{ github.event.inputs.ECS_SERVICE_NAME }}
         cluster: ${{ github.event.inputs.ECS_CLUSTER_NAME }}
         wait-for-service-stability: false
-        
   
 #        Manual update aws ecs service 
 #        https://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html
