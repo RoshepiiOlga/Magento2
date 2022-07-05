@@ -5,24 +5,24 @@ on:
  workflow_dispatch:
    inputs:
      AWS_ACCOUNT:
-       description: 'AWS ACCOUNT'
+       description: 'AWS account'
        required: true
        type: text
        default: 908410081654
      AWS_REGION:
-       description: 'AWS REGION'
+       description: 'AWS region'
        required: true
        type: text
        default: eu-west-1
      ECR_REPO:
-       description: 'ECR REPOSITORY'
+       description: 'ECR repository'
        required: true
        type: choice
        options:
           - common
           - aplication
      CONTAINER_NAME_FIRST:
-        description: 'CONTAINER NAME'
+        description: 'Container `name'
         required: true
         type: choice
         options:
@@ -30,12 +30,12 @@ on:
           - php
           - php_magento
      IMAGE_TAG_FIRST:
-      description: 'IMAGE TAG NGINX'
+      description: 'Image tag'
       required: true
       type: text
       default: latest
      CONTAINER_NAME_SECOND:
-       description: 'CONTAINER NAME'
+       description: 'Container name'
        required: true
        type: choice
        options:
@@ -43,17 +43,17 @@ on:
           - php
           - php_magento
      IMAGE_TAG_SECOND:
-      description: 'IMAGE TAG PHP'
+      description: 'Image tag'
       required: true
       type: text
       default:  latest     
      ECS_CLUSTER_NAME:
-       description: 'ECS CLUSTER'
+       description: 'ECS cluster'
        required: true
        type: text
        default:  ecs-prod-0001
      ECS_SERVICE_NAME:
-       description: 'ECS SERVICE'
+       description: 'ECS service'
        required: true
        type: text
        default:  test2
