@@ -22,7 +22,7 @@ on:
           - common
           - aplication
      CONTAINER_NAME_FIRST:
-        description: 'Container `name'
+        description: 'Container name first images'
         required: true
         type: choice
         options:
@@ -30,12 +30,12 @@ on:
           - php
           - php_magento
      IMAGE_TAG_FIRST:
-      description: 'Image tag'
+      description: 'Image tag first images'
       required: true
       type: text
       default: latest
      CONTAINER_NAME_SECOND:
-       description: 'Container name'
+       description: 'Container name second images'
        required: true
        type: choice
        options:
@@ -43,7 +43,7 @@ on:
           - php
           - php_magento
      IMAGE_TAG_SECOND:
-      description: 'Image tag'
+      description: 'Image tag second images'
       required: true
       type: text
       default:  latest     
