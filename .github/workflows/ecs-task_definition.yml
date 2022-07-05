@@ -90,11 +90,12 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
       
     - name: Testing  
-      run: |
-      echo "${{ github.event.inputs.AWS_ACCOUNT }} "
+      run: | 
+       echo "${{ github.event.inputs.AWS_ACCOUNT }} "
        echo " ${{ github.event.inputs.AWS_REGION }} "
        echo " ${{ github.event.inputs.ECR_REPO }}"
-      echo "  ${{ github.event.inputs.IMAGE_TAG_NGINX }}"
+       echo "  ${{ github.event.inputs.IMAGE_TAG_NGINX }}"
+       
       
     - name: Render Amazon ECS task definition for first container nginx
       uses: aws-actions/amazon-ecs-render-task-definition@v1
