@@ -21,27 +21,27 @@ on:
        options:
           - common
           - aplication
-     CONTAINER_NAME_FIRST:
-        description: 'Container name first images'
-        required: true
-        type: choice
-        options:
-          - nginx
-          - php
-          - php_magento
+#      CONTAINER_NAME_FIRST:
+#         description: 'Container name first images'
+#         required: true
+#         type: choice
+#         options:
+#           - nginx
+#           - php
+#           - php_magento
      IMAGE_TAG_FIRST:
       description: 'Image tag first images'
       required: true
       type: text
       default: latest
-     CONTAINER_NAME_SECOND:
-       description: 'Container name second images'
-       required: true
-       type: choice
-       options:
-          - nginx
-          - php
-          - php_magento
+#      CONTAINER_NAME_SECOND:
+#        description: 'Container name second images'
+#        required: true
+#        type: choice
+#        options:
+#           - nginx
+#           - php
+#           - php_magento
      IMAGE_TAG_SECOND:
       description: 'Image tag second images'
       required: true
@@ -96,7 +96,7 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
-        container-name: ${{ github.event.inputs.CONTAINER_NAME_FIRST }}
+        container-name: ${{ github.event.inputs.IMAGE_TAG_FIRST }}
         image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_FIRST }}
     
     - name: Render Amazon ECS task definition for second container php
