@@ -21,36 +21,36 @@ on:
        options:
           - common
           - aplication
-     IMAGE_TAG_NGINX:
-      description: 'IMAGE TAG NGINX'
-      required: true
-      type: text
-      default: latest   
-     IMAGE_TAG_PHP:
-      description: 'IMAGE TAG PHP'
-      required: true
-      type: text
-      default:  latest
-     CONTAINER_NAME_PHP:
-       description: 'CONTAINER NAME PHP'
-       required: true
-       type: text
-       default:  latest
      CONTAINER_NAME_NGINX:
        description: 'CONTAINER NAME NGINX'
        required: true
        type: text
        default:  latest
-     ECS_SERVICE_NAME:
-       description: 'ECS SERVICE'
+     IMAGE_TAG_NGINX:
+      description: 'IMAGE TAG NGINX'
+      required: true
+      type: text
+      default: latest
+     CONTAINER_NAME_PHP:
+       description: 'CONTAINER NAME PHP'
        required: true
        type: text
-       default:  test2
+       default:  latest
+     IMAGE_TAG_PHP:
+      description: 'IMAGE TAG PHP'
+      required: true
+      type: text
+      default:  latest     
      ECS_CLUSTER_NAME:
        description: 'ECS CLUSTER'
        required: true
        type: text
        default:  ecs-prod-0001
+     ECS_SERVICE_NAME:
+       description: 'ECS SERVICE'
+       required: true
+       type: text
+       default:  test2
 #      TASK_VERSION:
 #        description: 'TASK VERSION'
 #        required: true
@@ -82,8 +82,6 @@ jobs:
         
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
-    
-
         
     - name: Render Amazon ECS task definition for first container nginx
       uses: aws-actions/amazon-ecs-render-task-definition@v1
