@@ -77,7 +77,7 @@ jobs:
     
     - name: 'Build ${{ github.event.inputs.ECR_REPO }} image'
       run: 
-        docker build -f ${{ env.DOCKER_FILE }} -t ${{env.DOCKER_IMAGE}} . 
+        docker build -f Magento2/dockerfiles -t ${{env.DOCKER_IMAGE}} . 
         
     - name: 'Scan ${{ github.event.inputs.ECR_REPO }} image'
       id: scan
