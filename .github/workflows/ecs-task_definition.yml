@@ -89,7 +89,7 @@ jobs:
         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
         container-name: ${{ github.event.inputs.CONTAINER_NAME_NGINX }}
         image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_NGINX }}
-    
+         echo `${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_NGINX }}`
     - name: Render Amazon ECS task definition for second container php
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
