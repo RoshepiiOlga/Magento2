@@ -18,8 +18,8 @@ on:
        required: true
        type: choice
        options:
-          - magento-magento-app-sb-0001
-          - magento-magento-data-sb-0001
+          - common
+          - aplication
       CONTAINER_NAME:
         description: 'CONTAINER NAME'
         required: true
