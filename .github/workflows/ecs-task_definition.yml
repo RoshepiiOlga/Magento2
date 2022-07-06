@@ -23,31 +23,30 @@ on:
           - aplication
      CONTAINER_NAME_NGINX:
         description: 'Container name first images'
-        required: true
-        type: text
-#        type: choice
-#         options:
-#           - nginx
-#           - php
-#           - php_magento
+        required: true      
+        type: choice
+        options:
+           - magento_ecr_image_nginx
+           - sigma_magento-php_fpm
+           - php_magento
      IMAGE_TAG_NGINX:
       description: 'Image tag first images'
       required: true
       type: text
-      default: latest
+      default: nginx
      CONTAINER_NAME_PHP:
        description: 'Container name second images'
        required: true
        type: choice
        options:
-          - nginx
-          - php
+          - magento_ecr_image_nginx
+          - sigma_magento-php_fpm
           - php_magento
      IMAGE_TAG_PHP:
       description: 'Image tag second images'
       required: true
       type: text
-      default:  latest     
+      default:  php     
      ECS_CLUSTER_NAME:
        description: 'ECS cluster'
        required: true
