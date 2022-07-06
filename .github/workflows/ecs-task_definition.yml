@@ -113,7 +113,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ github.event.inputs.AWS_REGION }}
       run: |
-        aws ecs stop-task --cluster magento-cluster-CI --task 6686659034714339504
+        aws ecs stop-task --cluster magento-cluster-CI --task 82c729bd293942c396561d84140f24cb
         aws ecs update-service --cluster ${{ github.event.inputs.ECS_CLUSTER_NAME }} --service ${{ github.event.inputs.ECS_SERVICE_NAME }} --task-definition CccomboEXIT:9   --force-new-deployment
 
 #     - name: Deploy to Amazon ECS service
