@@ -24,11 +24,12 @@ on:
      CONTAINER_NAME_NGINX:
         description: 'Container name first images'
         required: true
-        type: choice
-        options:
-          - nginx
-          - php
-          - php_magento
+        type: text
+#        type: choice
+#         options:
+#           - nginx
+#           - php
+#           - php_magento
      IMAGE_TAG_NGINX:
       description: 'Image tag first images'
       required: true
