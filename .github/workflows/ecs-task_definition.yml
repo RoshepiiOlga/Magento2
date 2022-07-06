@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
 
-    steps:
+        steps:
     - name: Git clone repo
       uses: actions/checkout@v3
 
@@ -83,29 +83,23 @@ jobs:
         
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
-      
-    - name: Testing  
-      run: | 
-       echo "${{ github.event.inputs.AWS_ACCOUNT }} "
-       echo " ${{ github.event.inputs.AWS_REGION }} "
-       echo " ${{ github.event.inputs.ECR_REPO }}"
-       echo "  ${{ github.event.inputs.IMAGE_TAG_NGINX }}"
-            
+    
+
+        
     - name: Render Amazon ECS task definition for first container nginx
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
         container-name: ${{ github.event.inputs.CONTAINER_NAME_NGINX }}
-       # image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_NGINX }}
-        image: "908410081654.dkr.ecr.eu-west-1.amazonaws.com/common:nginx"
-        
+        image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_NGINX }}
+    
     - name: Render Amazon ECS task definition for second container php
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
         container-name: ${{ github.event.inputs.CONTAINER_NAME_PHP }}
         image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_PHP }}
-        
+
     - name: Deploy task definition in ECS service
       env:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
