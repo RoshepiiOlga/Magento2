@@ -21,28 +21,27 @@ on:
        options:
           - common
           - aplication
-  #     default: magento_ecr_private_rep
-#      CONTAINER_NAME_NGINX:
-#         description: 'Container name first images'
-#         required: true
-#         type: choice
-#         options:
-#           - nginx
-#           - php
-#           - php_magento
+     CONTAINER_NAME_NGINX:
+        description: 'Container name first images'
+        required: true
+        type: choice
+        options:
+          - nginx
+          - php
+          - php_magento
      IMAGE_TAG_NGINX:
       description: 'Image tag first images'
       required: true
       type: text
       default: latest
-#      CONTAINER_NAME_PHP:
-#        description: 'Container name second images'
-#        required: true
-#        type: choice
-#        options:
-#           - nginx
-#           - php
-#           - php_magento
+     CONTAINER_NAME_PHP:
+       description: 'Container name second images'
+       required: true
+       type: choice
+       options:
+          - nginx
+          - php
+          - php_magento
      IMAGE_TAG_PHP:
       description: 'Image tag second images'
       required: true
@@ -58,11 +57,6 @@ on:
        required: true
        type: text
        default:  test2
-#      TASK_VERSION:
-#        description: 'TASK VERSION'
-#        required: true
-#        type: text
-#        default:  latest
      
 env:
   ECS-TASK_DEFENITION-JSON_FILE:             ecs-task-definition.json                                      
@@ -96,53 +90,34 @@ jobs:
        echo " ${{ github.event.inputs.AWS_REGION }} "
        echo " ${{ github.event.inputs.ECR_REPO }}"
        echo "  ${{ github.event.inputs.IMAGE_TAG_NGINX }}"
-       
-      
-#     - name: Render Amazon ECS task definition for first container nginx
-#       uses: aws-actions/amazon-ecs-render-task-definition@v1
-#       with:
-#         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
-#         container-name: ${{ github.event.inputs.IMAGE_TAG_NGINX }}
-#        # image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_NGINX }}
-#         image: "908410081654.dkr.ecr.eu-west-1.amazonaws.com/common:nginx"
-        
-#     - name: Render Amazon ECS task definition for second container php
-#       uses: aws-actions/amazon-ecs-render-task-definition@v1
-#       with:
-#         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
-#         container-name: ${{ github.event.inputs.IMAGE_TAG_PHP }}
-#         image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_PHP }}
-        
-#     - name: Deploy task definition in ECS service
-#       env:
-#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#         aws-region: ${{ github.event.inputs.AWS_REGION }}
-#       run: |
-#        aws ecs stop-task --cluster magento-cluster-CI --task 124ba7b6dc814e85b9930d3b1e579dae
-#        aws ecs update-service --cluster ${{ github.event.inputs.ECS_CLUSTER_NAME }} --service ${{ github.event.inputs.ECS_SERVICE_NAME }} --task-definition CccomboEXIT:9   --force-new-deployment
-    - name: Render Amazon ECS task definition for first container
-      id: render-web-container
+            
+    - name: Render Amazon ECS task definition for first container nginx
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
-        container-name: nginx
-        image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/common:nginx
-#         environment-variables: |
-#             LOG_LEVEL=info
-#             ENVIRONMENT=prod
-
-    - name: Modify Amazon ECS task definition with second container
-      id: render-app-container
+        container-name: ${{ github.event.inputs.CONTAINER_NAME_NGINX }}
+       # image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_NGINX }}
+        image: "908410081654.dkr.ecr.eu-west-1.amazonaws.com/common:nginx"
+        
+    - name: Render Amazon ECS task definition for second container php
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
-        container-name: php
-        image: 908410081654.dkr.ecr.eu-west-1.amazonaws.com/common:php
+        container-name: ${{ github.event.inputs.CONTAINER_NAME_PHP }}
+        image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_PHP }}
+        
+    - name: Deploy task definition in ECS service
+      env:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ github.event.inputs.AWS_REGION }}
+      run: |
+       aws ecs stop-task --cluster magento-cluster-CI --task 124ba7b6dc814e85b9930d3b1e579dae
+       aws ecs update-service --cluster ${{ github.event.inputs.ECS_CLUSTER_NAME }} --service ${{ github.event.inputs.ECS_SERVICE_NAME }} --task-definition CccomboEXIT:9   --force-new-deployment
 
-    - name: Deploy to Amazon ECS service
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
-        service: test2
-        cluster: ecs-prod-0001
+#     - name: Deploy to Amazon ECS service
+#       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+#       with:
+#         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
+#         service: test2
+#         cluster: ecs-prod-0001
