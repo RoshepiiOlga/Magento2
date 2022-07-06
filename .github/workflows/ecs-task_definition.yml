@@ -102,14 +102,14 @@ jobs:
         container-name: ${{ github.event.inputs.CONTAINER_NAME_PHP }}
         image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_PHP }}
 
-#     - name: Deploy task definition in ECS service
-#       env:
-#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#         aws-region: ${{ github.event.inputs.AWS_REGION }}
-#       run: 
-#      #  aws ecs stop-task --cluster magento-cluster-CI --task 124ba7b6dc814e85b9930d3b1e579dae (--task-definition CccomboEXIT:9   --force-new-deployment)
-#        aws ecs update-service --cluster ${{ github.event.inputs.ECS_CLUSTER_NAME }} --service ${{ github.event.inputs.ECS_SERVICE_NAME }} 
+    - name: Deploy task definition in ECS service
+      env:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ github.event.inputs.AWS_REGION }}
+      run: 
+     #  aws ecs stop-task --cluster magento-cluster-CI --task 124ba7b6dc814e85b9930d3b1e579dae (--task-definition CccomboEXIT:9   --force-new-deployment)
+       aws ecs update-service --cluster ${{ github.event.inputs.ECS_CLUSTER_NAME }} --service ${{ github.event.inputs.ECS_SERVICE_NAME }} 
 
 #     - name: Deploy to Amazon ECS service
 #       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -118,10 +118,10 @@ jobs:
 #         service: test2
 #         cluster: ecs-prod-0001
         
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.render.outputs.task-definition }}
-        service: ${{ github.event.inputs.ECS_SERVICE_NAME }}
-        cluster: ${{ github.event.inputs.ECS_CLUSTER_NAME }}
-        wait-for-service-stability: true
+#     - name: Deploy Amazon ECS task definition
+#       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+#       with:
+#         task-definition: ${{ steps.render.outputs.task-definition }}
+#         service: ${{ github.event.inputs.ECS_SERVICE_NAME }}
+#         cluster: ${{ github.event.inputs.ECS_CLUSTER_NAME }}
+#         wait-for-service-stability: true
