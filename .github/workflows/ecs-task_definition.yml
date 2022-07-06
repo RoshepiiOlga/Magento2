@@ -47,16 +47,16 @@ on:
       required: true
       type: text
       default:  php     
-#      ECS_CLUSTER_NAME:
-#        description: 'ECS cluster'
-#        required: true
-#        type: text
-#        default:  ecs-prod-0001
-#      ECS_SERVICE_NAME:
-#        description: 'ECS service'
-#        required: true
-#        type: text
-#        default:  test2
+     ECS_CLUSTER_NAME:
+       description: 'ECS cluster'
+       required: true
+       type: text
+       default:  ecs-prod-0001
+     ECS_SERVICE_NAME:
+       description: 'ECS service'
+       required: true
+       type: text
+       default:  testing_github
      
 env:
   ECS-TASK_DEFENITION-JSON_FILE:             ecs-task-definition.json 
@@ -102,14 +102,14 @@ jobs:
         image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_PHP }}
     
     - name: Create service
-      run: aws ecr create-repository --repository-name ${{ github.event.inputs.ECR_REPO }} --region ${{ github.event.inputs.AWS_REGION }}
+      run: aws ecr create-repository --repository-name ${{ github.event.inputs.ECS_SERVICE_NAME }} --region ${{ github.event.inputs.AWS_REGION }}
       
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: my-service
-        cluster: ${{ github.event.inputs.ECR_REPO }}
+        cluster: ${{ github.event.inputs.ECS_SERVICE_NAME }}
         wait-for-service-stability: true
 #     - name: Deploy task definition in ECS service
 #       env:
