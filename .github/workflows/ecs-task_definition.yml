@@ -101,12 +101,15 @@ jobs:
         container-name: ${{ github.event.inputs.CONTAINER_NAME_PHP }}
         image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_PHP }}
     
+    - name: Create service
+      run: aws ecr create-repository --repository-name ${{ github.event.inputs.ECR_REPO }} --region ${{ github.event.inputs.AWS_REGION }}
+      
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: my-service
-        cluster: ecs-prod-0001
+        cluster: ${{ github.event.inputs.ECR_REPO }}
         wait-for-service-stability: true
 #     - name: Deploy task definition in ECS service
 #       env:
