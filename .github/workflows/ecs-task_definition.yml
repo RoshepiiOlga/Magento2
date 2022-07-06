@@ -56,7 +56,7 @@ on:
        description: 'ECS service'
        required: true
        type: text
-       default:  test2
+       default:  test3
      
 env:
   ECS-TASK_DEFENITION-JSON_FILE:             ecs-task-definition.json 
@@ -113,8 +113,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ github.event.inputs.AWS_REGION }}
       run: |
-        aws ecs stop-task --cluster magento-cluster-CI --task 82c729bd293942c396561d84140f24cb
-        aws ecs update-service --cluster ${{ github.event.inputs.ECS_CLUSTER_NAME }} --service ${{ github.event.inputs.ECS_SERVICE_NAME }} --task-definition CccomboEXIT:9   --force-new-deployment
+        aws ecs update-service --cluster ${{ github.event.inputs.ECS_CLUSTER_NAME }} --service ${{ github.event.inputs.ECS_SERVICE_NAME }} --task-definition magento_ecs_task_github:64  --force-new-deployment
 
 #     - name: Deploy to Amazon ECS service
 #       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
