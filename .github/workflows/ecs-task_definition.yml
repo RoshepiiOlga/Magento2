@@ -59,7 +59,9 @@ on:
        default:  test2
      
 env:
-  ECS-TASK_DEFENITION-JSON_FILE:             ecs-task-definition.json                                      
+  ECS-TASK_DEFENITION-JSON_FILE:             ecs-task-definition.json 
+ # DOCKER_IMAGE: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG }}
+ # DOCKER_FILE: infrastructure/docker/${{ github.event.inputs.ECR_REPO }}.Dockerfile
    
 permissions:
   contents: read
