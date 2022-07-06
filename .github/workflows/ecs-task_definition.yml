@@ -85,51 +85,24 @@ jobs:
         
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
-      
-      
-      
-    - name: Render Amazon ECS task definition for first container
-      id: render-web-container
+       
+    - name: Render Amazon ECS task definition for first container nginx
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
         container-name: ${{ github.event.inputs.CONTAINER_NAME_NGINX }}
-        image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}
-        environment-variables: |
-            LOG_LEVEL=info
-            ENVIRONMENT=prod
-
-    - name: Modify Amazon ECS task definition with second container
-      id: render-app-container
+        image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_NGINX }}
+    
+    - name: Render Amazon ECS task definition for second container php
       uses: aws-actions/amazon-ecs-render-task-definition@v1
+      id: task-def
       with:
-        task-definition: ${{ steps.render-web-container.outputs.task-definition }}
+        task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
         container-name: ${{ github.event.inputs.CONTAINER_NAME_PHP }}
-        image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}
-
-    - name: Deploy to Amazon ECS service
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.render-app-container.outputs.task-definition }}
-        service: my-service
-        cluster: ${{ github.event.inputs.ECS_CLUSTER_NAME }}     
-#     - name: Render Amazon ECS task definition for first container nginx
-#       uses: aws-actions/amazon-ecs-render-task-definition@v1
-#       with:
-#         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
-#         container-name: ${{ github.event.inputs.CONTAINER_NAME_NGINX }}
-#         image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_NGINX }}
+        image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_PHP }}
     
-#     - name: Render Amazon ECS task definition for second container php
-#       uses: aws-actions/amazon-ecs-render-task-definition@v1
-#       id: task-def
-#       with:
-#         task-definition: ${{ env.ECS-TASK_DEFENITION-JSON_FILE }}
-#         container-name: ${{ github.event.inputs.CONTAINER_NAME_PHP }}
-#         image: ${{ github.event.inputs.AWS_ACCOUNT }}.dkr.ecr.${{ github.event.inputs.AWS_REGION }}.amazonaws.com/${{ github.event.inputs.ECR_REPO }}:${{ github.event.inputs.IMAGE_TAG_PHP }}
-    
-#     - name: Create service
-#       run: aws ecr create-repository --repository-name ${{ github.event.inputs.ECS_SERVICE_NAME }} --region ${{ github.event.inputs.AWS_REGION }}
+    - name: Create service
+      run: aws ecs create-service --cluster ${{ github.event.inputs.ECS_CLUSTER_NAME }} --service ${{ github.event.inputs.ECS_SERVICE_NAME }} --force-new-deployment
       
 #     - name: Deploy Amazon ECS task definition
 #       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
