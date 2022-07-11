@@ -52,11 +52,11 @@ on:
        required: true
        type: text
        default:  ecs-prod-0001
-     ECS_SERVICE_NAME:
-       description: 'ECS service'
-       required: true
-       type: text
-       default:  test3
+#      ECS_SERVICE_NAME:
+#        description: 'ECS service'
+#        required: true
+#        type: text
+#        default:  test3
      
 env:
   ECS-TASK_DEFENITION-JSON_FILE:             ecs-task-definition.json 
