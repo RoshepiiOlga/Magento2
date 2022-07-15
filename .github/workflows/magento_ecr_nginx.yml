@@ -19,7 +19,7 @@ on:
        type: choice
        options:
           - common
-          - aplication
+          - application
       CONTAINER_NAME:
         description: 'CONTAINER NAME'
         required: true
