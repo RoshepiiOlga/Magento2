@@ -15,4 +15,4 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 COPY magento2 /var/www/html
 COPY ./php-fpm/files/php.ini "$PHP_INI_DIR/php.ini"
 RUN chown -R www-data /var/www/html
-#RUN composer install
+RUN composer install
