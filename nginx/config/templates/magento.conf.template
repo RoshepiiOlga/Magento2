@@ -89,10 +89,15 @@ server {
         }
     }
 
-    location / {
-        try_files $uri $uri/ /index.php$is_args$args;
+  #  location / {
+  #      try_files $uri $uri/ /index.php$is_args$args;
+  #  }
+  
+    location /custom_checks/fack_healthcheck {
+        access_log off;
+        return 200 “healthy\n”;
     }
-
+    
     location /pub/ {
         location ~ ^/pub/media/(downloadable|customer|import|custom_options|theme_customization/.*\.xml) {
             deny all;
