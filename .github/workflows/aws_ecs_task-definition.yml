@@ -1,6 +1,5 @@
 name: Create and push nginx image to ECR
 
-
 on:
   workflow_dispatch:
     inputs:
