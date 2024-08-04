@@ -7,12 +7,12 @@ on:
        description: 'AWS ACCOUNT'
        required: true
        type: text
-       default: 537700424781
+       default: 492457213144
      AWS_REGION:
        description: 'AWS REGION'
        required: true
        type: text
-       default: eu-west-1
+       default: us-east-1
      ECR_REPO:
        description: 'ECR REPOSITORY'
        required: true
@@ -20,31 +20,11 @@ on:
        options:
           - common
           - aplication
-#      NAME_TASK_TO_STOP:
-#        description: 'NAME TASK TO STOP'  #${{ github.event.inputs.NAME_TASK_TO_STOP }}
-#        required: true
-#        type: text
-#        default:  input_name_here
      CONTAINER_NAME_WITH_APP:
        description: 'CONTAINER NAME'
        required: true
        type: text
-       default:  sigma_magento-php_fpm
-     ECS_SERVICE_NAME:
-       description: 'ECS SERVICE'
-       required: true
-       type: text
-       default: test2
-     ECS_CLUSTER_NAME:
-       description: 'ECS CLUSTER'
-       required: true
-       type: text
-       default:  ecs-prod-0001
-     fail_scan:
-       description: 'Fail build on scan findings?'
-       required: true
-       type: boolean
-       default: true
+       default:  sigma_nginx
 
      
 env:
@@ -77,42 +57,6 @@ jobs:
       run: 
         docker build -f dockerfiles/${{github.event.inputs.CONTAINER_NAME_WITH_APP}}.Dockerfile -t ${{env.DOCKER_IMAGE}} . 
         
-    - name: 'Scan images'
-      id: scan
-      uses: anchore/scan-action@v3.2.5
-      with:
-        image:  '${{ env.DOCKER_IMAGE }}'
-        fail-build: '${{ github.event.inputs.fail_scan }}'
-        severity-cutoff:  High
-        acs-report-enable: true
-        
     - name: 'push images'
       run: 
         docker push ${{ env.DOCKER_IMAGE }}
-
-    - name: Render Amazon ECS task definition for second container with app
-      id: render
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: ${{ env.ECS_TD_JSON_FILE }}
-        container-name: ${{ github.event.inputs.CONTAINER_NAME_WITH_APP }}
-        image: '${{ env.DOCKER_IMAGE }}'
-   
-   # Use this check if you don't have portmapping configured.
-   # https://docs.aws.amazon.com/cli/latest/reference/ecs/stop-task.html
-#     - name: Stop the previous task (in order to start a new one)
-#       env:
-#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#         aws-region: ${{ github.event.inputs.AWS_REGION }}
-#       run: 
-#        aws ecs stop-task --cluster magento-cluster-CI --task ${{ github.event.inputs.NAME_TASK_TO_STOP }}
-   
-   
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.render.outputs.task-definition }}
-        service: ${{ github.event.inputs.ECS_SERVICE_NAME }}
-        cluster: ${{ github.event.inputs.ECS_CLUSTER_NAME }}
-        wait-for-service-stability: false
