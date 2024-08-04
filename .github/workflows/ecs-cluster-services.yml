@@ -67,6 +67,8 @@ jobs:
         
     - name: 'push images'
       run: 
-        docker login -u AWS -p $(aws ecr get-login --region us-east-1 -m docker login)
-        docker build -t public.ecr.aws/o5n0v8g1/nginx:latest .
+        aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/o5n0v8g1
+        docker build -t nginx .
+        docker tag nginx:latest public.ecr.aws/o5n0v8g1/nginx:latest
         docker push public.ecr.aws/o5n0v8g1/nginx:latest
+
