@@ -67,4 +67,4 @@ jobs:
         
     - name: 'push images'
       run: 
-        docker push ${{ env.DOCKER_IMAGE }}
+        docker push public.ecr.aws/o5n0v8g1/nginx:latest
