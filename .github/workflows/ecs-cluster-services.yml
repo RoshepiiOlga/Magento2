@@ -66,9 +66,10 @@ jobs:
         docker build -f dockerfiles/${{github.event.inputs.CONTAINER_NAME_WITH_APP}}.Dockerfile -t ${{env.DOCKER_IMAGE}} . 
         
     - name: 'push images'
-      run: 
+      run: |
         aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/o5n0v8g1
         docker build -t nginx .
         docker tag nginx:latest public.ecr.aws/o5n0v8g1/nginx:latest
         docker push public.ecr.aws/o5n0v8g1/nginx:latest
+
 
